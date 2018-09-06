@@ -15,6 +15,30 @@
 #error "Do not #include <ctype.h>. You will get a ZERO."
 #endif
 
+void verifyFactor(char** argv){
+    int length = 0;
+    while(**argv != '\0'){
+        length++;        
+        (*argv)++;    
+    }
+    
+    int factor_len = length;
+    while(length != 0){
+        (*argv)--;
+        length--;
+    }
+    if(factor_len > 4){
+       debug("%s","false");
+    }
+
+    else if(factor_len < 4){
+        if(*argv == '0'){
+            debug("%s","false");
+        }
+    }
+    debug("%s", *argv);
+}
+
 /*
  * You may modify this file and/or move the functions contained here
  * to other source files (except for main.c) as you wish.
@@ -48,10 +72,101 @@
  * @modifies global variable "global_options" to contain a bitmap representing
  * the selected options.
  */
-int validargs(int argc, char **argv)
+int validargs(int argc, char** argv)
 {
+    if(argc == 0){
+        return 0;
+    }
+
+    argv++;
+    int curr_pos = 1;
+    int scenario;
+
+    while(**argv != '\0' ){
+        if(curr_pos == 1){
+            if(**argv != '-'){
+                return 0;
+            }
+            (*argv)++;
+
+            if(**argv == 'h'){
+               (*argv)++;
+                if(**argv == '\0'){
+                    scenario = 1;
+                    debug("%s","apple juice");
+                    return 1;
+                }
+                else{
+                    return 0;
+                }
+            }
+            else if(**argv == 'u' || **argv == 'd'){
+                (*argv)++;
+                if(**argv == '\0'){
+                    scenario = 2;
+                }
+                else
+                    return 0;
+            }
+            else if(**argv == 'c'){
+                (*argv)++;
+                if(**argv == '\0'){
+                    scenario = 3;
+                    if(argc < 3){
+                        return 0;
+                    }
+                }
+                else
+                    return 0;
+            }
+            else{
+                return 0;
+            }
+        }
+
+        else if(curr_pos == 2){
+            if(**argv != '-'){
+                return 0;
+            }
+            if(scenario == 2){
+               (*argv)++;
+                if(**argv == 'f'){
+                    (*argv)++;
+                    if(**argv != '\0')
+                        return 0;
+                    else if(argc < 4)
+                        return 0;
+                }
+                else
+                    return 0;
+            }
+            else if(scenario == 3){
+                (*argv)++;
+                if(**argv == 'k'){
+                    (*argv)++;
+                    if(**argv != '\0')
+                        return 0;
+               }
+                else
+                    return 0;
+            }
+        }
+        else if(curr_pos == 3){
+                if(scenario == 2){
+                    //call the verifyFactor method here.
+                    verifyFactor(argv);
+                }
+        }
+
+        argv++;
+        curr_pos++;
+      }
+
     return 0;
 }
+
+
+
 
 /**
  * @brief  Recodes a Sun audio (.au) format audio stream, reading the stream
