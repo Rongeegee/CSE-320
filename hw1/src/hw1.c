@@ -15,28 +15,65 @@
 #error "Do not #include <ctype.h>. You will get a ZERO."
 #endif
 
-void verifyFactor(char** argv){
+int verifyFactor(char** argv){
     int length = 0;
     while(**argv != '\0'){
-        length++;        
-        (*argv)++;    
+        length++;
+        (*argv)++;
     }
-    
+
     int factor_len = length;
     while(length != 0){
         (*argv)--;
         length--;
     }
     if(factor_len > 4){
-       debug("%s","false");
+        return 0;
     }
 
     else if(factor_len < 4){
-        if(*argv == '0'){
-            debug("%s","false");
+        if(**argv == '0'){
+            return 0;
         }
+        else
+            return 1;
     }
-    debug("%s", *argv);
+    else if(factor_len == 4){
+        if(**argv != '1'){
+            return 0;
+         }
+        (*argv)++;
+        if(**argv != '0'){
+            return 0;
+        }
+        (*argv)++;
+        if(**argv != '0' && **argv != '1' && **argv != '2'){
+            return 0;
+        }
+        (*argv)++;
+        if(**argv != '0' && **argv != '1' && **argv != '2' && **argv != '3' && **argv != '4'){
+            return 0;
+        }
+        return 1;
+    }
+        return 1;
+}
+
+int verifyKey(char** argv){
+    int length = 0;
+    while(**argv != '\0'){
+        if(**argv < 48 || **argv >102)
+            return 0;
+        else if (**argv > 57 && **argv < 65)
+            return 0;
+        else if(**argv > 70 && **argv < 97)
+            return 0; 
+        length++;
+        (*argv)++;
+    }
+    if(length > 8)
+        return 0;
+    return 1;
 }
 
 /*
@@ -93,7 +130,6 @@ int validargs(int argc, char** argv)
                (*argv)++;
                 if(**argv == '\0'){
                     scenario = 1;
-                    debug("%s","apple juice");
                     return 1;
                 }
                 else{
@@ -109,6 +145,7 @@ int validargs(int argc, char** argv)
                     return 0;
             }
             else if(**argv == 'c'){
+                debug("%s","1");
                 (*argv)++;
                 if(**argv == '\0'){
                     scenario = 3;
@@ -143,6 +180,7 @@ int validargs(int argc, char** argv)
             else if(scenario == 3){
                 (*argv)++;
                 if(**argv == 'k'){
+                    debug("%s","2");
                     (*argv)++;
                     if(**argv != '\0')
                         return 0;
@@ -154,15 +192,34 @@ int validargs(int argc, char** argv)
         else if(curr_pos == 3){
                 if(scenario == 2){
                     //call the verifyFactor method here.
-                    verifyFactor(argv);
+                    if(!verifyFactor(argv))
+                        return 0;
                 }
+                else if(scenario == 3){
+                    debug("%s","3");
+                    if(!verifyKey(argv))
+                        return 0;
+                }
+        }
+        else if(curr_pos == 4){
+                if(scenario == 2 || scenario == 3){
+                    debug("%s","4");
+                    if(**argv != '-'){
+                         return 0;
+                     }
+                    (*argv)++;
+                    if(**argv != 'p')
+                         return 0;
+                    return 1;
+                }
+                
         }
 
         argv++;
         curr_pos++;
       }
 
-    return 0;
+    return 1;
 }
 
 
