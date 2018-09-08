@@ -18,10 +18,11 @@
 int verifyFactor(char** argv){
     int length = 0;
     while(**argv != '\0'){
+        if(**argv < 48 || **argv > 57)
+            return 0;
         length++;
         (*argv)++;
     }
-
     int factor_len = length;
     while(length != 0){
         (*argv)--;
@@ -118,8 +119,9 @@ int validargs(int argc, char** argv)
     argv++;
     int curr_pos = 1;
     int scenario;
-
-    while(**argv != '\0' ){
+    int curr_string = 2;
+    int fComeFirst;
+    while(curr_pos < argc){
         if(curr_pos == 1){
             if(**argv != '-'){
                 return 0;
@@ -145,7 +147,6 @@ int validargs(int argc, char** argv)
                     return 0;
             }
             else if(**argv == 'c'){
-                debug("%s","1");
                 (*argv)++;
                 if(**argv == '\0'){
                     scenario = 3;
@@ -167,12 +168,19 @@ int validargs(int argc, char** argv)
             }
             if(scenario == 2){
                (*argv)++;
-                if(**argv == 'f'){
+                if(**argv == 'f'){                    
                     (*argv)++;
                     if(**argv != '\0')
                         return 0;
-                    else if(argc < 4)
+                    if(argc < 4)
                         return 0;
+                    fComeFirst = 1;
+                }
+                else if(**argv == 'p'){
+                    (*argv)++;
+                    if(**argv != '\0')
+                        return 0;  
+                    fComeFirst = 0;      
                 }
                 else
                     return 0;
@@ -180,9 +188,10 @@ int validargs(int argc, char** argv)
             else if(scenario == 3){
                 (*argv)++;
                 if(**argv == 'k'){
-                    debug("%s","2");
                     (*argv)++;
                     if(**argv != '\0')
+                        return 0;
+                    if(argc < 4)
                         return 0;
                }
                 else
@@ -191,24 +200,60 @@ int validargs(int argc, char** argv)
         }
         else if(curr_pos == 3){
                 if(scenario == 2){
-                    //call the verifyFactor method here.
-                    if(!verifyFactor(argv))
-                        return 0;
+                    if (fComeFirst == 1){
+                        if(!verifyFactor(argv))                 
+                           return 0;
+                    }       
+                    else if(fComeFirst == 0){
+                        if(**argv != '-'){
+                            return 0;
+                        }
+                        (*argv)++;
+                        if(**argv != 'f')
+                            return 0;
+                        (*argv)++;
+                        if(**argv != '\0'){
+                            return 0;
+                        }
+                        if(argc < 5)
+                            return 0;
+                    }
                 }
                 else if(scenario == 3){
-                    debug("%s","3");
                     if(!verifyKey(argv))
                         return 0;
                 }
         }
         else if(curr_pos == 4){
-                if(scenario == 2 || scenario == 3){
-                    debug("%s","4");
+                if(scenario == 2){
+                    if(fComeFirst == 1){
+                        if(**argv != '-'){
+                             return 0;
+                        }
+                        (*argv)++;
+                        if(**argv != 'p')
+                             return 0; 
+                        (*argv)++;
+                        if(**argv != '\0')
+                             return 0;
+                        return 1;
+                    }
+                    else if(fComeFirst == 0){
+                        if(!verifyFactor(argv))
+                            return 0;
+                        else
+                            return 1;
+                    }
+                }
+                else if(scenario == 3){
                     if(**argv != '-'){
                          return 0;
                      }
                     (*argv)++;
                     if(**argv != 'p')
+                         return 0;
+                    (*argv)++;
+                    if(**argv != '\0')
                          return 0;
                     return 1;
                 }
@@ -218,7 +263,6 @@ int validargs(int argc, char** argv)
         argv++;
         curr_pos++;
       }
-
     return 1;
 }
 
