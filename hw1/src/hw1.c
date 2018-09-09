@@ -74,9 +74,175 @@ int verifyKey(char** argv){
     }
     if(length > 8)
         return 0;
+    while(length != 0){
+        (*argv)--;
+        length--;
+    }
     return 1;
 }
 
+/**
+ * @brief return the int value of a digit in a character form.
+ * 
+ */
+int getIntFromChar(char digit){
+    if(digit == '0')
+        return 0;
+    else if(digit == '1')
+        return 1;
+    else if(digit == '2')
+        return 2;
+    else if(digit == '3')
+        return 3;
+    else if(digit == '4')
+        return 4;
+    else if(digit == '5')
+        return 5;
+    else if(digit == '6')
+        return 6;
+    else if(digit == '7')
+        return 7;
+    else if(digit == '8')
+        return 8;
+    else
+        return 9;  
+}
+
+/**
+ * @brief return the decimal digit of a hex number in a character form.
+ * 
+ */
+
+int getDigitFromHex(char digit){
+    if(digit == '0')
+        return 0;
+    else if(digit == '1')
+        return 1;
+    else if(digit == '2')
+        return 2;
+    else if(digit == '3')
+        return 3;
+    else if(digit == '4')
+        return 4;
+    else if(digit == '5')
+        return 5;
+    else if(digit == '6')
+        return 6;
+    else if(digit == '7')
+        return 7;
+    else if(digit == '8')
+        return 8;
+    else if(digit == '9')
+        return 9;
+    else if(digit == 'A' || digit == 'a')
+        return 10;
+    else if(digit == 'B' || digit == 'b')
+        return 11;
+    else if(digit == 'C' || digit == 'c')
+        return 12;
+    else if(digit == 'D' || digit == 'd')
+        return 13;
+    else if(digit == 'E' || digit == 'e')
+        return 14;
+    else
+        return 15;
+}
+
+/**
+ * @brief return the decimal value of a hex number in a character form.
+ * 
+ */
+int getDecFromHex(char** argv){
+    int length = 0;
+    while(**argv != '\0'){
+        (*argv)++;
+        length++;
+    }
+    int current_bit = 0;
+    int decValue = 0;
+    (*argv)--;
+    
+    while(current_bit < length){
+        if(current_bit == 0)
+            decValue += getDigitFromHex(**argv);
+         
+        else if(current_bit == 1)
+            decValue += (getDigitFromHex(**argv) * 16);
+        
+        else if(current_bit == 2)
+            decValue += (getDigitFromHex(**argv) * 16 * 16);
+
+        else if(current_bit == 3)
+            decValue += (getDigitFromHex(**argv) * 16 * 16 * 16);
+
+        else if(current_bit == 4)
+            decValue += (getDigitFromHex(**argv) * 16 * 16 * 16 * 16);
+    
+        else if(current_bit == 5)
+            decValue += (getDigitFromHex(**argv) * 16 * 16 * 16 * 16 * 16);
+
+        else if(current_bit == 6)
+            decValue += (getDigitFromHex(**argv) * 16 * 16 * 16 * 16 * 16 * 16);
+
+        else 
+            decValue += (getDigitFromHex(**argv) * 16 * 16 * 16 * 16 * 16 * 16 * 16);
+        (*argv)--;
+        current_bit++;
+    }
+    return decValue;
+}
+
+/**
+ * @brief set the seventh- through sixteenth-most-significant bits (bits 57 - 48) to the factor (minus one) if the -f option was specified
+ * 
+ */
+void setGlobalOptF(char** argv){
+    int length = 0;
+    while(**argv != '\0'){
+        length++;
+        (*argv)++;
+    }
+    int factor_len = length;
+    while(length != 0){
+        length--;    
+        (*argv)--;
+    }
+    int factor_minus_1;
+    if(factor_len == 1)
+        factor_minus_1 = getIntFromChar(**argv)-1;
+
+    else if(factor_len == 2){
+        int tens = getIntFromChar(**argv) * 10;
+        (*argv)++;
+        int ones = getIntFromChar(**argv);
+        factor_minus_1 = tens + ones - 1;
+        (*argv)--;
+    }
+    else if(factor_len == 3){
+        int hundreds = getIntFromChar(**argv) * 100;
+        (*argv)++;
+        int tens = getIntFromChar(**argv) * 10;
+        (*argv)++;
+        int ones = getIntFromChar(**argv);
+        factor_minus_1 = hundreds + tens + ones - 1;
+        (*argv) = (*argv) - 2;
+    }
+    else if(factor_len == 4){
+        int thousands = getIntFromChar(**argv) * 1000;
+        (*argv)++;
+        int hundreds = getIntFromChar(**argv) * 100;
+        (*argv)++;
+        int tens = getIntFromChar(**argv) * 10;
+        (*argv)++;
+        int ones = getIntFromChar(**argv);
+        factor_minus_1 = thousands + hundreds + tens + ones - 1;    
+        (*argv) = (*argv) - 3;
+    }    
+    global_options = global_options >> 48;
+    global_options = global_options & 64512;
+    global_options = global_options | factor_minus_1;
+    global_options = global_options << 48;
+}
 /*
  * You may modify this file and/or move the functions contained here
  * to other source files (except for main.c) as you wish.
@@ -115,12 +281,13 @@ int validargs(int argc, char** argv)
     if(argc == 0){
         return 0;
     }
-
     argv++;
     int curr_pos = 1;
     int scenario;
     int curr_string = 2;
     int fComeFirst;
+    int fSpecified = 0;
+    int kSpecified = 0;
     while(curr_pos < argc){
         if(curr_pos == 1){
             if(**argv != '-'){
@@ -132,20 +299,39 @@ int validargs(int argc, char** argv)
                (*argv)++;
                 if(**argv == '\0'){
                     scenario = 1;
+                    global_options = global_options >> 63;
+                    global_options = (global_options | 1);
+                    global_options = global_options << 63;
                     return 1;
                 }
                 else{
                     return 0;
                 }
             }
-            else if(**argv == 'u' || **argv == 'd'){
+            else if(**argv == 'u'){
                 (*argv)++;
                 if(**argv == '\0'){
                     scenario = 2;
+                    global_options = global_options >> 62;
+                    global_options = (global_options | 1);
+                    global_options = global_options << 62;           
                 }
                 else
                     return 0;
             }
+            else if(**argv == 'd'){
+                (*argv)++;
+                if(**argv == '\0'){
+                    scenario = 2;
+                    global_options = global_options >> 61;
+                    global_options = (global_options | 1);
+                    global_options = global_options << 61;
+                    
+                }
+                else
+                    return 0;
+            }
+
             else if(**argv == 'c'){
                 (*argv)++;
                 if(**argv == '\0'){
@@ -153,6 +339,9 @@ int validargs(int argc, char** argv)
                     if(argc < 3){
                         return 0;
                     }
+                    global_options = global_options >> 60;
+                    global_options = (global_options | 1);
+                    global_options = global_options << 60;
                 }
                 else
                     return 0;
@@ -175,11 +364,18 @@ int validargs(int argc, char** argv)
                     if(argc < 4)
                         return 0;
                     fComeFirst = 1;
+                    argv++;
+                    setGlobalOptF(argv);
+                    argv--;
+                    fSpecified = 1;
                 }
                 else if(**argv == 'p'){
                     (*argv)++;
                     if(**argv != '\0')
                         return 0;  
+                    global_options = global_options >> 59;
+                    global_options = (global_options | 1);
+                    global_options = global_options << 59;
                     fComeFirst = 0;      
                 }
                 else
@@ -222,6 +418,10 @@ int validargs(int argc, char** argv)
                 else if(scenario == 3){
                     if(!verifyKey(argv))
                         return 0;
+                    
+                    unsigned long key = getDecFromHex(argv);
+                    global_options = (global_options | key);
+                    kSpecified = 1;                   
                 }
         }
         else if(curr_pos == 4){
@@ -263,6 +463,16 @@ int validargs(int argc, char** argv)
         argv++;
         curr_pos++;
       }
+    if(fSpecified == 0){
+        global_options = global_options >> 48;
+        global_options = global_options & 64512; 
+        global_options = global_options << 48;
+    }
+    if(kSpecified == 0){
+        debug("%lu", global_options);
+        global_options = global_options | 0;
+        debug("%lu", global_options);
+    }
     return 1;
 }
 
