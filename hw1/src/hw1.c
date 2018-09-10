@@ -286,8 +286,7 @@ int validargs(int argc, char** argv)
     int scenario;
     int curr_string = 2;
     int fComeFirst;
-    int fSpecified = 0;
-    int kSpecified = 0;
+    
     while(curr_pos < argc){
         if(curr_pos == 1){
             if(**argv != '-'){
@@ -366,8 +365,7 @@ int validargs(int argc, char** argv)
                     fComeFirst = 1;
                     argv++;
                     setGlobalOptF(argv);
-                    argv--;
-                    fSpecified = 1;
+                    argv--;      
                 }
                 else if(**argv == 'p'){
                     (*argv)++;
@@ -418,10 +416,9 @@ int validargs(int argc, char** argv)
                 else if(scenario == 3){
                     if(!verifyKey(argv))
                         return 0;
-                    
-                    unsigned long key = getDecFromHex(argv);
+                    unsigned long key = getDecFromHex(argv);          
                     global_options = (global_options | key);
-                    kSpecified = 1;                   
+                                   
                 }
         }
         else if(curr_pos == 4){
@@ -436,6 +433,7 @@ int validargs(int argc, char** argv)
                         (*argv)++;
                         if(**argv != '\0')
                              return 0;
+                        global_options = global_options | 576460752303423488;  
                         return 1;
                     }
                     else if(fComeFirst == 0){
@@ -455,6 +453,7 @@ int validargs(int argc, char** argv)
                     (*argv)++;
                     if(**argv != '\0')
                          return 0;
+                    global_options = global_options | 576460752303423488;
                     return 1;
                 }
                 
@@ -463,16 +462,8 @@ int validargs(int argc, char** argv)
         argv++;
         curr_pos++;
       }
-    if(fSpecified == 0){
-        global_options = global_options >> 48;
-        global_options = global_options & 64512; 
-        global_options = global_options << 48;
-    }
-    if(kSpecified == 0){
-        debug("%lu", global_options);
-        global_options = global_options | 0;
-        debug("%lu", global_options);
-    }
+        
+    
     return 1;
 }
 
