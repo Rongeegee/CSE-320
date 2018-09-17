@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "debug.h"
 #include "hw1.h"
@@ -68,7 +69,7 @@ int verifyKey(char** argv){
         else if (**argv > 57 && **argv < 65)
             return 0;
         else if(**argv > 70 && **argv < 97)
-            return 0; 
+            return 0;
         length++;
         (*argv)++;
     }
@@ -83,7 +84,7 @@ int verifyKey(char** argv){
 
 /**
  * @brief return the int value of a digit in a character form.
- * 
+ *
  */
 int getIntFromChar(char digit){
     if(digit == '0')
@@ -105,12 +106,12 @@ int getIntFromChar(char digit){
     else if(digit == '8')
         return 8;
     else
-        return 9;  
+        return 9;
 }
 
 /**
  * @brief return the decimal digit of a hex number in a character form.
- * 
+ *
  */
 
 int getDigitFromHex(char digit){
@@ -150,7 +151,7 @@ int getDigitFromHex(char digit){
 
 /**
  * @brief return the decimal value of a hex number in a character form.
- * 
+ *
  */
 int getDecFromHex(char** argv){
     int length = 0;
@@ -161,14 +162,14 @@ int getDecFromHex(char** argv){
     int current_bit = 0;
     int decValue = 0;
     (*argv)--;
-    
+
     while(current_bit < length){
         if(current_bit == 0)
             decValue += getDigitFromHex(**argv);
-         
+
         else if(current_bit == 1)
             decValue += (getDigitFromHex(**argv) * 16);
-        
+
         else if(current_bit == 2)
             decValue += (getDigitFromHex(**argv) * 16 * 16);
 
@@ -177,14 +178,14 @@ int getDecFromHex(char** argv){
 
         else if(current_bit == 4)
             decValue += (getDigitFromHex(**argv) * 16 * 16 * 16 * 16);
-    
+
         else if(current_bit == 5)
             decValue += (getDigitFromHex(**argv) * 16 * 16 * 16 * 16 * 16);
 
         else if(current_bit == 6)
             decValue += (getDigitFromHex(**argv) * 16 * 16 * 16 * 16 * 16 * 16);
 
-        else 
+        else
             decValue += (getDigitFromHex(**argv) * 16 * 16 * 16 * 16 * 16 * 16 * 16);
         (*argv)--;
         current_bit++;
@@ -194,7 +195,7 @@ int getDecFromHex(char** argv){
 
 /**
  * @brief set the seventh- through sixteenth-most-significant bits (bits 57 - 48) to the factor (minus one) if the -f option was specified
- * 
+ *
  */
 void setGlobalOptF(char** argv){
     int length = 0;
@@ -204,7 +205,7 @@ void setGlobalOptF(char** argv){
     }
     int factor_len = length;
     while(length != 0){
-        length--;    
+        length--;
         (*argv)--;
     }
     int factor_minus_1;
@@ -235,9 +236,9 @@ void setGlobalOptF(char** argv){
         int tens = getIntFromChar(**argv) * 10;
         (*argv)++;
         int ones = getIntFromChar(**argv);
-        factor_minus_1 = thousands + hundreds + tens + ones - 1;    
+        factor_minus_1 = thousands + hundreds + tens + ones - 1;
         (*argv) = (*argv) - 3;
-    }    
+    }
     global_options = global_options >> 48;
     global_options = global_options & 64512;
     global_options = global_options | factor_minus_1;
@@ -286,7 +287,7 @@ int validargs(int argc, char** argv)
     int scenario;
     int curr_string = 2;
     int fComeFirst;
-    
+
     while(curr_pos < argc){
         if(curr_pos == 1){
             if(**argv != '-'){
@@ -301,6 +302,7 @@ int validargs(int argc, char** argv)
                     global_options = global_options >> 63;
                     global_options = (global_options | 1);
                     global_options = global_options << 63;
+                    
                     return 1;
                 }
                 else{
@@ -313,7 +315,7 @@ int validargs(int argc, char** argv)
                     scenario = 2;
                     global_options = global_options >> 62;
                     global_options = (global_options | 1);
-                    global_options = global_options << 62;           
+                    global_options = global_options << 62;
                 }
                 else
                     return 0;
@@ -325,7 +327,7 @@ int validargs(int argc, char** argv)
                     global_options = global_options >> 61;
                     global_options = (global_options | 1);
                     global_options = global_options << 61;
-                    
+
                 }
                 else
                     return 0;
@@ -356,7 +358,7 @@ int validargs(int argc, char** argv)
             }
             if(scenario == 2){
                (*argv)++;
-                if(**argv == 'f'){                    
+                if(**argv == 'f'){
                     (*argv)++;
                     if(**argv != '\0')
                         return 0;
@@ -365,16 +367,16 @@ int validargs(int argc, char** argv)
                     fComeFirst = 1;
                     argv++;
                     setGlobalOptF(argv);
-                    argv--;      
+                    argv--;
                 }
                 else if(**argv == 'p'){
                     (*argv)++;
                     if(**argv != '\0')
-                        return 0;  
+                        return 0;
                     global_options = global_options >> 59;
                     global_options = (global_options | 1);
                     global_options = global_options << 59;
-                    fComeFirst = 0;      
+                    fComeFirst = 0;
                 }
                 else
                     return 0;
@@ -395,9 +397,9 @@ int validargs(int argc, char** argv)
         else if(curr_pos == 3){
                 if(scenario == 2){
                     if (fComeFirst == 1){
-                        if(!verifyFactor(argv))                 
+                        if(!verifyFactor(argv))
                            return 0;
-                    }       
+                    }
                     else if(fComeFirst == 0){
                         if(**argv != '-'){
                             return 0;
@@ -416,9 +418,9 @@ int validargs(int argc, char** argv)
                 else if(scenario == 3){
                     if(!verifyKey(argv))
                         return 0;
-                    unsigned long key = getDecFromHex(argv);          
+                    unsigned long key = getDecFromHex(argv);
                     global_options = (global_options | key);
-                                   
+
                 }
         }
         else if(curr_pos == 4){
@@ -429,11 +431,11 @@ int validargs(int argc, char** argv)
                         }
                         (*argv)++;
                         if(**argv != 'p')
-                             return 0; 
+                             return 0;
                         (*argv)++;
                         if(**argv != '\0')
                              return 0;
-                        global_options = global_options | 576460752303423488;  
+                        global_options = global_options | 576460752303423488;
                         return 1;
                     }
                     else if(fComeFirst == 0){
@@ -456,14 +458,14 @@ int validargs(int argc, char** argv)
                     global_options = global_options | 576460752303423488;
                     return 1;
                 }
-                
+
         }
 
         argv++;
         curr_pos++;
       }
-        
-    
+
+
     return 1;
 }
 
@@ -482,6 +484,234 @@ int validargs(int argc, char** argv)
  * @param  argv  Command-line arguments, for constructing modified annotation.
  * @return 1 if the recoding completed successfully, 0 otherwise.
  */
-int recode(char **argv) {
+int recode(char **argv){
     return 0;
 }
+
+/**
+ * @brief Read the header of a Sun audio file and check it for validity.
+ * @details  This function reads 24 bytes of data from the standard input and
+ * interprets it as the header of a Sun audio file.  The data is decoded into
+ * six unsigned int values, assuming big-endian byte order.   The decoded values
+ * are stored into the AUDIO_HEADER structure pointed at by hp.
+ * The header is then checked for validity, which means:  no error occurred
+ * while reading the header data, the magic number is valid, the data offset
+ * is a multiple of 8, the value of encoding field is one of {2, 3, 4, 5},
+ * and the value of the channels field is one of {1, 2}.
+ *
+ * @param hp  A pointer to the AUDIO_HEADER structure that is to receive
+ * the data.
+ * @return  1 if a valid header was read, otherwise 0.
+ */
+int read_header(AUDIO_HEADER *hp){
+
+    char c;
+    char* charPointer = &c;
+
+    int i;
+    for(i = 0; i < 24; i++){
+       *charPointer = getchar();
+       charPointer++;    
+    }
+    charPointer = &c;
+
+    //check the validity of magic number
+    //if the number is 0x2e736e64 in big endian format, the first byte will be equivalent to '.', the second byte will be equivalent to 's', the third byte will be 'n', the 4th byte will be 'd'
+    //an integer is 4 byte.
+    for(i = 0; i < 4;i++){
+        if (i == 0 && *charPointer != '.')
+            return 0;
+        if (i == 1 && *charPointer != 's')
+            return 0;
+        if (i == 2 && *charPointer != 'n')
+            return 0;
+        if (i == 3 && *charPointer != 'd')
+            return 0;
+        charPointer++;
+    }
+        
+    //checking the data offset
+    //only need to check if it's divisible by 8
+    //move the pointer to check the last byte of the "data offset" to see if it ends with three 0's in binary
+    charPointer = charPointer + 3;
+    char tempChar = *charPointer << 5;
+    if(tempChar != 0){
+        return 0;
+    }
+    
+    //checking the encoding field's validity
+    charPointer = charPointer + 5;
+    if(*charPointer != '\0')
+        return 0;
+    charPointer++;
+    if(*charPointer != '\0')
+        return 0;
+    charPointer++;
+    if(*charPointer != '\0')
+        return 0;
+    charPointer++;
+    if(*charPointer != 2 && *charPointer != 3 && *charPointer != 4 && *charPointer != 5)
+        return 0;    
+    
+    //checking the sixth field's validity, it can be either 1 or 2.
+    charPointer = charPointer + 5;
+    if(*charPointer != '\0')
+        return 0;
+    charPointer++;
+
+    if(*charPointer != '\0')
+        return 0;
+    charPointer++;
+
+    if(*charPointer != '\0')
+        return 0;
+    charPointer++;
+
+    if(*charPointer != 1 && *charPointer != 2)
+        return 0;
+    
+    //now, the data is valid, and we're gonna read it
+    charPointer = &c;
+    (*hp).magic_number = ((*hp).magic_number | (*charPointer << 24));
+    charPointer++;
+    (*hp).magic_number = ((*hp).magic_number | (*charPointer << 16));
+    charPointer++;
+    (*hp).magic_number = ((*hp).magic_number | (*charPointer << 8));
+    charPointer++;
+    (*hp).magic_number = ((*hp).magic_number | *charPointer);
+    charPointer++;
+
+    (*hp).data_offset = ((*hp).data_offset | (*charPointer << 24));
+    charPointer++;
+    (*hp).data_offset = ((*hp).data_offset | (*charPointer << 16));
+    charPointer++;
+    (*hp).data_offset = ((*hp).data_offset | (*charPointer << 8));
+    charPointer++;
+    (*hp).data_offset = ((*hp).data_offset | *charPointer );
+    charPointer++;
+
+    (*hp).data_size = ((*hp).data_size | (*charPointer << 24));
+    charPointer++;
+    (*hp).data_size = ((*hp).data_size | (*charPointer << 16));
+    charPointer++;
+    (*hp).data_size = ((*hp).data_size | (*charPointer << 8));
+    charPointer++;
+    (*hp).data_size = ((*hp).data_size | *charPointer );
+    charPointer++;
+
+    (*hp).encoding = ((*hp).encoding | (*charPointer << 24));
+    charPointer++;
+    (*hp).encoding = ((*hp).encoding | (*charPointer << 16));
+    charPointer++;
+    (*hp).encoding = ((*hp).encoding | (*charPointer << 8));
+    charPointer++;
+    (*hp).encoding = ((*hp).encoding | *charPointer );
+    charPointer++;
+    
+    (*hp).sample_rate = ((*hp).sample_rate | (*charPointer << 24));
+    charPointer++;
+    (*hp).sample_rate = ((*hp).sample_rate | (*charPointer << 16));
+    charPointer++;
+    (*hp).sample_rate = ((*hp).sample_rate | (*charPointer << 8));
+    charPointer++;
+    (*hp).sample_rate = ((*hp).sample_rate | *charPointer );
+    charPointer++;
+
+    (*hp).channels = ((*hp).channels | (*charPointer << 24));
+    charPointer++;
+    (*hp).channels = ((*hp).channels | (*charPointer << 16));
+    charPointer++;
+    (*hp).channels = ((*hp).channels | (*charPointer << 8));
+    charPointer++;
+    (*hp).channels = ((*hp).channels | *charPointer );
+   
+   return 1;
+}
+
+/**
+ * @brief  Write the header of a Sun audio file to the standard output.
+ * @details  This function takes the pointer to the AUDIO_HEADER structure passed
+ * as an argument, encodes this header into 24 bytes of data according to the Sun
+ * audio file format specifications, and writes this data to the standard output.
+ *
+ * @param  hp  A pointer to the AUDIO_HEADER structure that is to be output.
+ * @return  1 if the function is successful at writing the data; otherwise 0.
+ */
+int write_header(AUDIO_HEADER *hp){
+    if(putchar(((*hp).magic_number >> 24)) == EOF)
+            return 0;
+    if(putchar((((*hp).magic_number & 16711680) >> 16)) == EOF)
+            return 0;
+    if(putchar((((*hp).magic_number & 65280) >> 8)) == EOF)
+            return 0;
+    if(putchar(((*hp).magic_number & 255) == EOF))               
+            return 0;
+
+    if(putchar(((*hp).data_offset >> 24)) == EOF)
+            return 0;
+    if(putchar((((*hp).data_offset & 16711680) >> 16)) == EOF)
+            return 0;
+    if(putchar((((*hp).data_offset & 65280) >> 8)) == EOF)
+            return 0;
+    if(putchar(((*hp).data_offset & 255) == EOF)
+            return 0;
+
+    if(putchar(((*hp).data_size >> 24)) == EOF)
+            return 0;
+    if(putchar((((*hp).data_size & 16711680) >> 16)) == EOF)
+            return 0;
+    if(putchar((((*hp).data_size & 65280) >> 8)) == EOF)
+            return 0;
+    if(putchar(((*hp).data_size & 255) == EOF)
+            return 0;
+
+    if(putchar(((*hp).encoding >> 24)) == EOF)
+            return 0;
+    if(putchar((((*hp).encoding & 16711680) >> 16)) == EOF)
+            return 0;
+    if(putchar((((*hp).encoding & 65280) >> 8)) == EOF)
+            return 0;
+    if(putchar(((*hp).encoding & 255) == EOF)
+            return 0;
+
+    if(putchar(((*hp).sample_rate >> 24)) == EOF)
+            return 0;
+    if(putchar((((*hp).sample_rate & 16711680) >> 16)))
+            return 0;
+    if(putchar((((*hp).sample_rate & 65280) >> 8)))
+            return 0;
+    if(putchar(((*hp).sample_rate & 255) == EOF)
+            return 0;
+
+    if(putchar(((*hp).channels >> 24)) == EOF)
+            return 0;
+    if(putchar((((*hp).channels & 16711680) >> 16)))
+            return 0;
+    if(putchar((((*hp).channels & 65280) >> 8)))
+            return 0;
+    if(putchar(((*hp).channels & 255) == EOF)
+            return 0;
+
+    return 1;
+}
+
+/**
+ * @brief  Read annotation data for a Sun audio file from the standard input,
+ * storing the contents in a specified buffer.
+ * @details  This function takes a pointer 'ap' to a buffer capable of holding at
+ * least 'size' characters, and it reads 'size' characters from the standard input,
+ * storing the characters read in the specified buffer.  It is checked that the
+ * data read is terminated by at least one null ('\0') byte.
+ *
+ * @param  ap  A pointer to the buffer that is to receive the annotation data.
+ * @param  size  The number of bytes of data to be read.
+ * @return  1 if 'size' bytes of valid annotation data were successfully read;
+ * otherwise 0.
+ */
+int read_annotation(char *ap, unsigned int size){
+    while(*ap != '\0'){
+        
+    }
+}
+
+
