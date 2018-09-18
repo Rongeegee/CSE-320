@@ -490,6 +490,11 @@ int recode(char **argv){
     hp = &head;
     read_header(hp);
     write_header(hp);
+    
+    unsigned int annotation_size = (*hp).data_offset - sizeof(*hp);
+    read_annotation(input_annotation,annotation_size);
+    write_annotation(input_annotation,annotation_size);
+
     return 0;
 }
 
@@ -655,6 +660,8 @@ int write_header(AUDIO_HEADER *hp){
 int read_annotation(char *ap, unsigned int size){
     if(size > ANNOTATION_MAX)
         return 0;
+    if(size % 8 != 0)
+        return 0;
     int i;
     for(i = 0; i < size; i++){
         *ap = getchar();
@@ -664,7 +671,6 @@ int read_annotation(char *ap, unsigned int size){
                 return 0;
         }
     }
-    
     return 1;
 }
 
@@ -682,11 +688,33 @@ int read_annotation(char *ap, unsigned int size){
 int write_annotation(char *ap, unsigned int size){
     if(size > ANNOTATION_MAX)
         return 0;
+    if(size % 8 != 0)
+        return 0;
     int i;
     for(i = 0; i < size; i++){
-        putchar(*ap);
+        if(putchar(*ap) == EOF)
+            return 0;
         ap = ap + 1;
     }
     return 1;
 }
 
+/**
+ * @brief Read, from the standard input, a single frame of audio data having
+ * a specified number of channels and bytes per sample.
+ * @details  This function takes a pointer 'fp' to a buffer having sufficient
+ * space to hold 'channels' values of type 'int', it reads
+ * 'channels * bytes_per_sample' data bytes from the standard input,
+ * interpreting each successive set of 'bytes_per_sample' data bytes as
+ * the big-endian representation of a signed integer sample value, and it
+ * stores the decoded sample values into the specified buffer.
+ *
+ * @param  fp  A pointer to the buffer that is to receive the decoded sample
+ * values.
+ * @param  channels  The number of channels.
+ * @param  bytes_per_sample  The number of bytes per sample.
+ * @return  1 if a complete frame was read without error; otherwise 0.
+ */
+int read_frame(int *fp, int channels, int bytes_per_sample){
+    return 1;
+}
