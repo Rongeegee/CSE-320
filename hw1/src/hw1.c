@@ -485,6 +485,11 @@ int validargs(int argc, char** argv)
  * @return 1 if the recoding completed successfully, 0 otherwise.
  */
 int recode(char **argv){
+    AUDIO_HEADER *hp;
+    AUDIO_HEADER head;
+    hp = &head;
+    read_header(hp);
+    write_header(hp);
     return 0;
 }
 
@@ -504,127 +509,54 @@ int recode(char **argv){
  * @return  1 if a valid header was read, otherwise 0.
  */
 int read_header(AUDIO_HEADER *hp){
+        (*hp).magic_number = ((*hp).magic_number | (getchar() << 24));
+        (*hp).magic_number = ((*hp).magic_number | (getchar() << 16));
+        (*hp).magic_number = ((*hp).magic_number | (getchar() << 8));
+        (*hp).magic_number = (*hp).magic_number | (getchar();
+        
+        (*hp).data_offset = ((*hp).data_offset | (getchar() << 24));
+        (*hp).data_offset = ((*hp).data_offset | (getchar() << 16));
+        (*hp).data_offset = ((*hp).data_offset | (getchar() << 8));
+        (*hp).data_offset = (*hp).data_offset | (getchar();
 
-    char c;
-    char* charPointer = &c;
+        (*hp).data_size = ((*hp).data_size | (getchar() << 24));
+        (*hp).data_size = ((*hp).data_size | (getchar() << 16));
+        (*hp).data_size = ((*hp).data_size | (getchar() << 8));
+        (*hp).data_size = (*hp).data_size | (getchar();
 
-    int i;
-    for(i = 0; i < 24; i++){
-       *charPointer = getchar();
-       charPointer++;    
-    }
-    charPointer = &c;
+        (*hp).encoding = ((*hp).encoding | (getchar() << 24));
+        (*hp).encoding = ((*hp).encoding | (getchar() << 16));
+        (*hp).encoding = ((*hp).encoding | (getchar() << 8));
+        (*hp).encoding = (*hp).encoding | (getchar();
 
+        (*hp).sample_rate = ((*hp).sample_rate | (getchar() << 24));
+        (*hp).sample_rate = ((*hp).sample_rate | (getchar() << 16));
+        (*hp).sample_rate = ((*hp).sample_rate | (getchar() << 8));
+        (*hp).sample_rate = (*hp).sample_rate | (getchar();
+
+        (*hp).channels = ((*hp).channels | (getchar() << 24));
+        (*hp).channels = ((*hp).channels | (getchar() << 16));
+        (*hp).channels = ((*hp).channels | (getchar() << 8));
+        (*hp).channels = (*hp).channels | (getchar();
+
+        
+    
     //check the validity of magic number
-    //if the number is 0x2e736e64 in big endian format, the first byte will be equivalent to '.', the second byte will be equivalent to 's', the third byte will be 'n', the 4th byte will be 'd'
-    //an integer is 4 byte.
-    for(i = 0; i < 4;i++){
-        if (i == 0 && *charPointer != '.')
-            return 0;
-        if (i == 1 && *charPointer != 's')
-            return 0;
-        if (i == 2 && *charPointer != 'n')
-            return 0;
-        if (i == 3 && *charPointer != 'd')
-            return 0;
-        charPointer++;
-    }
+    if((*hp).magic_number != 0x2e736e64)
+        return 0;
         
     //checking the data offset
-    //only need to check if it's divisible by 8
-    //move the pointer to check the last byte of the "data offset" to see if it ends with three 0's in binary
-    charPointer = charPointer + 3;
-    char tempChar = *charPointer << 5;
-    if(tempChar != 0){
+    if((*hp).data_offset % 8 != 0)
         return 0;
-    }
     
     //checking the encoding field's validity
-    charPointer = charPointer + 5;
-    if(*charPointer != '\0')
-        return 0;
-    charPointer++;
-    if(*charPointer != '\0')
-        return 0;
-    charPointer++;
-    if(*charPointer != '\0')
-        return 0;
-    charPointer++;
-    if(*charPointer != 2 && *charPointer != 3 && *charPointer != 4 && *charPointer != 5)
-        return 0;    
+    if((*hp).encoding != 2 && (*hp).encoding != 3 && (*hp).encoding != 4 && (*hp).encoding != 5)
+        return 0; 
     
     //checking the sixth field's validity, it can be either 1 or 2.
-    charPointer = charPointer + 5;
-    if(*charPointer != '\0')
-        return 0;
-    charPointer++;
-
-    if(*charPointer != '\0')
-        return 0;
-    charPointer++;
-
-    if(*charPointer != '\0')
-        return 0;
-    charPointer++;
-
-    if(*charPointer != 1 && *charPointer != 2)
+    if((*hp).channels != 1 && (*hp).channels != 2)
         return 0;
     
-    //now, the data is valid, and we're gonna read it
-    charPointer = &c;
-    (*hp).magic_number = ((*hp).magic_number | (*charPointer << 24));
-    charPointer++;
-    (*hp).magic_number = ((*hp).magic_number | (*charPointer << 16));
-    charPointer++;
-    (*hp).magic_number = ((*hp).magic_number | (*charPointer << 8));
-    charPointer++;
-    (*hp).magic_number = ((*hp).magic_number | *charPointer);
-    charPointer++;
-
-    (*hp).data_offset = ((*hp).data_offset | (*charPointer << 24));
-    charPointer++;
-    (*hp).data_offset = ((*hp).data_offset | (*charPointer << 16));
-    charPointer++;
-    (*hp).data_offset = ((*hp).data_offset | (*charPointer << 8));
-    charPointer++;
-    (*hp).data_offset = ((*hp).data_offset | *charPointer );
-    charPointer++;
-
-    (*hp).data_size = ((*hp).data_size | (*charPointer << 24));
-    charPointer++;
-    (*hp).data_size = ((*hp).data_size | (*charPointer << 16));
-    charPointer++;
-    (*hp).data_size = ((*hp).data_size | (*charPointer << 8));
-    charPointer++;
-    (*hp).data_size = ((*hp).data_size | *charPointer );
-    charPointer++;
-
-    (*hp).encoding = ((*hp).encoding | (*charPointer << 24));
-    charPointer++;
-    (*hp).encoding = ((*hp).encoding | (*charPointer << 16));
-    charPointer++;
-    (*hp).encoding = ((*hp).encoding | (*charPointer << 8));
-    charPointer++;
-    (*hp).encoding = ((*hp).encoding | *charPointer );
-    charPointer++;
-    
-    (*hp).sample_rate = ((*hp).sample_rate | (*charPointer << 24));
-    charPointer++;
-    (*hp).sample_rate = ((*hp).sample_rate | (*charPointer << 16));
-    charPointer++;
-    (*hp).sample_rate = ((*hp).sample_rate | (*charPointer << 8));
-    charPointer++;
-    (*hp).sample_rate = ((*hp).sample_rate | *charPointer );
-    charPointer++;
-
-    (*hp).channels = ((*hp).channels | (*charPointer << 24));
-    charPointer++;
-    (*hp).channels = ((*hp).channels | (*charPointer << 16));
-    charPointer++;
-    (*hp).channels = ((*hp).channels | (*charPointer << 8));
-    charPointer++;
-    (*hp).channels = ((*hp).channels | *charPointer );
-   
    return 1;
 }
 
@@ -653,8 +585,8 @@ int write_header(AUDIO_HEADER *hp){
             return 0;
     if(putchar((((*hp).data_offset & 65280) >> 8)) == EOF)
             return 0;
-    if(putchar(((*hp).data_offset & 255) == EOF)
-            return 0;
+    if(putchar((*hp).data_offset & 255) == EOF)
+            return 0; 
 
     if(putchar(((*hp).data_size >> 24)) == EOF)
             return 0;
@@ -662,7 +594,7 @@ int write_header(AUDIO_HEADER *hp){
             return 0;
     if(putchar((((*hp).data_size & 65280) >> 8)) == EOF)
             return 0;
-    if(putchar(((*hp).data_size & 255) == EOF)
+    if(putchar((*hp).data_size & 255) == EOF)
             return 0;
 
     if(putchar(((*hp).encoding >> 24)) == EOF)
@@ -671,7 +603,7 @@ int write_header(AUDIO_HEADER *hp){
             return 0;
     if(putchar((((*hp).encoding & 65280) >> 8)) == EOF)
             return 0;
-    if(putchar(((*hp).encoding & 255) == EOF)
+    if(putchar((*hp).encoding & 255) == EOF)
             return 0;
 
     if(putchar(((*hp).sample_rate >> 24)) == EOF)
@@ -680,7 +612,7 @@ int write_header(AUDIO_HEADER *hp){
             return 0;
     if(putchar((((*hp).sample_rate & 65280) >> 8)))
             return 0;
-    if(putchar(((*hp).sample_rate & 255) == EOF)
+    if(putchar((*hp).sample_rate & 255) == EOF)
             return 0;
 
     if(putchar(((*hp).channels >> 24)) == EOF)
@@ -689,7 +621,7 @@ int write_header(AUDIO_HEADER *hp){
             return 0;
     if(putchar((((*hp).channels & 65280) >> 8)))
             return 0;
-    if(putchar(((*hp).channels & 255) == EOF)
+    if(putchar((*hp).channels & 255) == EOF)
             return 0;
 
     return 1;
@@ -709,9 +641,8 @@ int write_header(AUDIO_HEADER *hp){
  * otherwise 0.
  */
 int read_annotation(char *ap, unsigned int size){
-    while(*ap != '\0'){
-        
-    }
+    
+    return 1;
 }
 
 
