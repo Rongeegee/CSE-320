@@ -653,8 +653,40 @@ int write_header(AUDIO_HEADER *hp){
  * otherwise 0.
  */
 int read_annotation(char *ap, unsigned int size){
+    if(size > ANNOTATION_MAX)
+        return 0;
+    int i;
+    for(i = 0; i < size; i++){
+        *ap = getchar();
+        ap++;
+        if(i == (size - 1)){
+            if((*ap) != '\0')
+                return 0;
+        }
+    }
     
     return 1;
 }
 
+/**
+ * @brief  Write annotation data for a Sun audio file to the standard output.
+ * @details  This function takes a pointer 'ap' to a buffer containing 'size'
+ * characters, and it writes 'size' characters from that buffer to the standard
+ * output.
+ *
+ * @param  ap  A pointer to the buffer containing the annotation data to be
+ * written.
+ * @param  size  The number of bytes of data to be written.
+ * @return  1 if 'size' bytes of data were successfully written; otherwise 0.
+ */
+int write_annotation(char *ap, unsigned int size){
+    if(size > ANNOTATION_MAX)
+        return 0;
+    int i;
+    for(i = 0; i < size; i++){
+        putchar(*ap);
+        ap = ap + 1;
+    }
+    return 1;
+}
 
