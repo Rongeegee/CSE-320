@@ -509,38 +509,45 @@ int recode(char **argv){
  * @return  1 if a valid header was read, otherwise 0.
  */
 int read_header(AUDIO_HEADER *hp){
+        (*hp).magic_number = 0;
         (*hp).magic_number = ((*hp).magic_number | (getchar() << 24));
         (*hp).magic_number = ((*hp).magic_number | (getchar() << 16));
         (*hp).magic_number = ((*hp).magic_number | (getchar() << 8));
-        (*hp).magic_number = (*hp).magic_number | (getchar();
+        (*hp).magic_number = (*hp).magic_number | getchar();
         
+        (*hp).data_offset = 0;
         (*hp).data_offset = ((*hp).data_offset | (getchar() << 24));
         (*hp).data_offset = ((*hp).data_offset | (getchar() << 16));
         (*hp).data_offset = ((*hp).data_offset | (getchar() << 8));
-        (*hp).data_offset = (*hp).data_offset | (getchar();
+        (*hp).data_offset = (*hp).data_offset | getchar();
 
+        (*hp).data_size = 0;
         (*hp).data_size = ((*hp).data_size | (getchar() << 24));
         (*hp).data_size = ((*hp).data_size | (getchar() << 16));
         (*hp).data_size = ((*hp).data_size | (getchar() << 8));
-        (*hp).data_size = (*hp).data_size | (getchar();
+        (*hp).data_size = (*hp).data_size | getchar();
 
+        (*hp).encoding = 0;
         (*hp).encoding = ((*hp).encoding | (getchar() << 24));
         (*hp).encoding = ((*hp).encoding | (getchar() << 16));
         (*hp).encoding = ((*hp).encoding | (getchar() << 8));
-        (*hp).encoding = (*hp).encoding | (getchar();
+        (*hp).encoding = (*hp).encoding | getchar();
 
+        (*hp).sample_rate = 0;
         (*hp).sample_rate = ((*hp).sample_rate | (getchar() << 24));
         (*hp).sample_rate = ((*hp).sample_rate | (getchar() << 16));
         (*hp).sample_rate = ((*hp).sample_rate | (getchar() << 8));
-        (*hp).sample_rate = (*hp).sample_rate | (getchar();
+        (*hp).sample_rate = (*hp).sample_rate | getchar();
 
+        (*hp).channels = 0;
         (*hp).channels = ((*hp).channels | (getchar() << 24));
         (*hp).channels = ((*hp).channels | (getchar() << 16));
         (*hp).channels = ((*hp).channels | (getchar() << 8));
-        (*hp).channels = (*hp).channels | (getchar();
+        (*hp).channels = (*hp).channels | getchar();
 
         
-    
+      
+
     //check the validity of magic number
     if((*hp).magic_number != 0x2e736e64)
         return 0;
@@ -556,7 +563,6 @@ int read_header(AUDIO_HEADER *hp){
     //checking the sixth field's validity, it can be either 1 or 2.
     if((*hp).channels != 1 && (*hp).channels != 2)
         return 0;
-    
    return 1;
 }
 
@@ -572,13 +578,15 @@ int read_header(AUDIO_HEADER *hp){
 int write_header(AUDIO_HEADER *hp){
     if(putchar(((*hp).magic_number >> 24)) == EOF)
             return 0;
-    if(putchar((((*hp).magic_number & 16711680) >> 16)) == EOF)
+    if(putchar(((*hp).magic_number & 16711680) >> 16) == EOF)
             return 0;
     if(putchar((((*hp).magic_number & 65280) >> 8)) == EOF)
             return 0;
-    if(putchar(((*hp).magic_number & 255) == EOF))               
+    if(putchar((*hp).magic_number & 255) == EOF)               
             return 0;
+    
 
+    
     if(putchar(((*hp).data_offset >> 24)) == EOF)
             return 0;
     if(putchar((((*hp).data_offset & 16711680) >> 16)) == EOF)
@@ -587,7 +595,9 @@ int write_header(AUDIO_HEADER *hp){
             return 0;
     if(putchar((*hp).data_offset & 255) == EOF)
             return 0; 
+        
 
+ 
     if(putchar(((*hp).data_size >> 24)) == EOF)
             return 0;
     if(putchar((((*hp).data_size & 16711680) >> 16)) == EOF)
@@ -597,6 +607,7 @@ int write_header(AUDIO_HEADER *hp){
     if(putchar((*hp).data_size & 255) == EOF)
             return 0;
 
+   
     if(putchar(((*hp).encoding >> 24)) == EOF)
             return 0;
     if(putchar((((*hp).encoding & 16711680) >> 16)) == EOF)
@@ -608,22 +619,23 @@ int write_header(AUDIO_HEADER *hp){
 
     if(putchar(((*hp).sample_rate >> 24)) == EOF)
             return 0;
-    if(putchar((((*hp).sample_rate & 16711680) >> 16)))
+    if(putchar((((*hp).sample_rate & 16711680) >> 16)) == EOF)
             return 0;
-    if(putchar((((*hp).sample_rate & 65280) >> 8)))
+    if(putchar((((*hp).sample_rate & 65280) >> 8)) == EOF)
             return 0;
     if(putchar((*hp).sample_rate & 255) == EOF)
             return 0;
-
+    
     if(putchar(((*hp).channels >> 24)) == EOF)
             return 0;
-    if(putchar((((*hp).channels & 16711680) >> 16)))
+    if(putchar((((*hp).channels & 16711680) >> 16)) == EOF)
             return 0;
-    if(putchar((((*hp).channels & 65280) >> 8)))
+    if(putchar((((*hp).channels & 65280) >> 8)) == EOF)
             return 0;
     if(putchar((*hp).channels & 255) == EOF)
             return 0;
-
+   
+    
     return 1;
 }
 
