@@ -302,7 +302,7 @@ int validargs(int argc, char** argv)
                     global_options = global_options >> 63;
                     global_options = (global_options | 1);
                     global_options = global_options << 63;
-                    
+
                     return 1;
                 }
                 else{
@@ -488,14 +488,62 @@ int recode(char **argv){
     AUDIO_HEADER *hp;
     AUDIO_HEADER head;
     hp = &head;
-    read_header(hp);
-    write_header(hp);
-    
-    unsigned int annotation_size = (*hp).data_offset - sizeof(*hp);
-    read_annotation(input_annotation,annotation_size);
-    write_annotation(input_annotation,annotation_size);
 
-    return 0;
+    if(read_header(hp) == 0)
+        return 0;
+    if(write_header(hp) == 0)
+        return 0;
+
+
+    unsigned int annotation_size = (*hp).data_offset - sizeof(*hp);
+    if(read_annotation(input_annotation,annotation_size) == 0)
+        return 0;
+    if(write_annotation(input_annotation,annotation_size) == 0)
+        return 0;
+
+    //reading the frame
+
+
+    int channels = (*hp).channels;
+    int bytes_per_sample = (*hp).encoding - 1 ;
+
+     read_frame((int*)input_frame,channels,bytes_per_sample);
+
+   // int* frame_read_pointer = (int *)input_frame;
+
+
+    //int byte_read_for_now = 0;
+    // while(byte_read_for_now < (*hp).data_size){
+    //   if(read_frame(frame_read_pointer,channels,bytes_per_sample) == 0){
+    //     return 0;
+    //   }
+
+    //   byte_read_for_now = byte_read_for_now +(channels * bytes_per_sample);
+    // }
+
+
+
+
+    // //write the frame
+    // int* frame_write_pointer = (int *)input_frame;
+
+    // int byte_written_for_now = 0;
+
+    // while(byte_written_for_now < (*hp).data_size){
+    //   if (write_frame(frame_write_pointer,channels,bytes_per_sample) == 0){
+    //     return 0;
+    //   }
+
+    //   byte_written_for_now = byte_written_for_now + (bytes_per_sample * channels);
+    // }
+
+    write_frame((int*)input_frame,channels,bytes_per_sample);
+
+
+
+    return 1;
+
+
 }
 
 /**
@@ -519,7 +567,8 @@ int read_header(AUDIO_HEADER *hp){
         (*hp).magic_number = ((*hp).magic_number | (getchar() << 16));
         (*hp).magic_number = ((*hp).magic_number | (getchar() << 8));
         (*hp).magic_number = (*hp).magic_number | getchar();
-        
+
+
         (*hp).data_offset = 0;
         (*hp).data_offset = ((*hp).data_offset | (getchar() << 24));
         (*hp).data_offset = ((*hp).data_offset | (getchar() << 16));
@@ -531,6 +580,7 @@ int read_header(AUDIO_HEADER *hp){
         (*hp).data_size = ((*hp).data_size | (getchar() << 16));
         (*hp).data_size = ((*hp).data_size | (getchar() << 8));
         (*hp).data_size = (*hp).data_size | getchar();
+
 
         (*hp).encoding = 0;
         (*hp).encoding = ((*hp).encoding | (getchar() << 24));
@@ -550,21 +600,21 @@ int read_header(AUDIO_HEADER *hp){
         (*hp).channels = ((*hp).channels | (getchar() << 8));
         (*hp).channels = (*hp).channels | getchar();
 
-        
-      
+
+
 
     //check the validity of magic number
     if((*hp).magic_number != 0x2e736e64)
         return 0;
-        
+
     //checking the data offset
     if((*hp).data_offset % 8 != 0)
         return 0;
-    
+
     //checking the encoding field's validity
     if((*hp).encoding != 2 && (*hp).encoding != 3 && (*hp).encoding != 4 && (*hp).encoding != 5)
-        return 0; 
-    
+        return 0;
+
     //checking the sixth field's validity, it can be either 1 or 2.
     if((*hp).channels != 1 && (*hp).channels != 2)
         return 0;
@@ -587,11 +637,11 @@ int write_header(AUDIO_HEADER *hp){
             return 0;
     if(putchar((((*hp).magic_number & 65280) >> 8)) == EOF)
             return 0;
-    if(putchar((*hp).magic_number & 255) == EOF)               
+    if(putchar((*hp).magic_number & 255) == EOF)
             return 0;
-    
 
-    
+
+
     if(putchar(((*hp).data_offset >> 24)) == EOF)
             return 0;
     if(putchar((((*hp).data_offset & 16711680) >> 16)) == EOF)
@@ -599,10 +649,10 @@ int write_header(AUDIO_HEADER *hp){
     if(putchar((((*hp).data_offset & 65280) >> 8)) == EOF)
             return 0;
     if(putchar((*hp).data_offset & 255) == EOF)
-            return 0; 
-        
+            return 0;
 
- 
+
+
     if(putchar(((*hp).data_size >> 24)) == EOF)
             return 0;
     if(putchar((((*hp).data_size & 16711680) >> 16)) == EOF)
@@ -612,7 +662,7 @@ int write_header(AUDIO_HEADER *hp){
     if(putchar((*hp).data_size & 255) == EOF)
             return 0;
 
-   
+
     if(putchar(((*hp).encoding >> 24)) == EOF)
             return 0;
     if(putchar((((*hp).encoding & 16711680) >> 16)) == EOF)
@@ -630,7 +680,7 @@ int write_header(AUDIO_HEADER *hp){
             return 0;
     if(putchar((*hp).sample_rate & 255) == EOF)
             return 0;
-    
+
     if(putchar(((*hp).channels >> 24)) == EOF)
             return 0;
     if(putchar((((*hp).channels & 16711680) >> 16)) == EOF)
@@ -639,8 +689,8 @@ int write_header(AUDIO_HEADER *hp){
             return 0;
     if(putchar((*hp).channels & 255) == EOF)
             return 0;
-   
-    
+
+
     return 1;
 }
 
@@ -716,5 +766,43 @@ int write_annotation(char *ap, unsigned int size){
  * @return  1 if a complete frame was read without error; otherwise 0.
  */
 int read_frame(int *fp, int channels, int bytes_per_sample){
-    return 1;
+        int bytes_to_read = channels * bytes_per_sample;
+        int byte_read = 0;
+        while (byte_read < bytes_to_read){
+            *fp = *fp << 8;
+            *fp = *fp | getchar();
+            byte_read++;
+        }
+        if(byte_read != bytes_to_read)
+            return 0;
+        return 1;
+}
+
+/**
+ * @brief  Write, to the standard output, a single frame of audio data having
+ * a specified number of channels and bytes per sample.
+ * @details  This function takes a pointer 'fp' to a buffer that contains
+ * 'channels' values of type 'int', and it writes these data values to the
+ * standard output using big-endian byte order, resulting in a total of
+ * 'channels * bytes_per_sample' data bytes written.
+ *
+ * @param  fp  A pointer to the buffer that contains the sample values to
+ * be written.
+ * @param  channels  The number of channels.
+ * @param  bytes_per_sample  The number of bytes per sample.
+ * @return  1 if the complete frame was written without error; otherwise 0.
+ */
+int write_frame(int *fp, int channels, int bytes_per_sample){
+        int bytes_to_write = channels * bytes_per_sample;
+        char* pointer;
+        pointer= (char* )&(*fp);
+        pointer += (bytes_to_write-1);
+        //int byte_written = 0;
+        while (bytes_to_write != 0){
+            putchar(*pointer);
+            pointer--;
+            bytes_to_write--;
+        }
+
+        return 1;
 }
