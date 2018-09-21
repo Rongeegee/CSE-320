@@ -510,12 +510,18 @@ int recode(char **argv){
     int bytes_per_sample = (*hp).encoding - 1 ;
 
     //read the frame
-    read_frame((int*)input_frame,channels,bytes_per_sample);
+    //read_frame((int*)input_frame,channels,bytes_per_sample);
 
     //write the frame
-    write_frame((int*)input_frame,channels,bytes_per_sample);
+    //write_frame((int*)input_frame,channels,bytes_per_sample);
 
 
+    //speedUp function testing
+    debug("%lu",global_options);
+    int factor = ((global_options >> 48) & 1023) + 1;
+    debug("%d",factor);
+    int num_of_frame = (*hp).data_size/(channels*bytes_per_sample);
+    speedUp(num_of_frame, factor, channels,bytes_per_sample);
 
     return 1;
 
@@ -718,8 +724,10 @@ int write_annotation(char *ap, unsigned int size){
         return 0;
     int i;
     for(i = 0; i < size; i++){
+        debug("%c",*ap);
         if(putchar(*ap) == EOF)
             return 0;
+        debug("%c",*ap);
         ap = ap + 1;
     }
     return 1;
