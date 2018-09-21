@@ -795,11 +795,11 @@ int read_frame(int *fp, int channels, int bytes_per_sample){
 int write_frame(int *fp, int channels, int bytes_per_sample){
         int bytes_to_write = channels * bytes_per_sample;
         char* pointer;
-        pointer= (char* )&(*fp);
+        pointer= (char* )fp;
         pointer += (bytes_to_write-1);
-        //int byte_written = 0;
         while (bytes_to_write != 0){
-            putchar(*pointer);
+            if(putchar(*pointer)== EOF)
+                return 0;
             pointer--;
             bytes_to_write--;
         }
