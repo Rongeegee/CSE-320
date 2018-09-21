@@ -16,6 +16,8 @@
 #error "Do not #include <ctype.h>. You will get a ZERO."
 #endif
 
+void speedUp(int num_of_frame, int factor, int channels, int bytes_per_sample);
+
 int verifyFactor(char** argv){
     int length = 0;
     while(**argv != '\0'){
@@ -507,36 +509,10 @@ int recode(char **argv){
     int channels = (*hp).channels;
     int bytes_per_sample = (*hp).encoding - 1 ;
 
-     read_frame((int*)input_frame,channels,bytes_per_sample);
+    //read the frame
+    read_frame((int*)input_frame,channels,bytes_per_sample);
 
-   // int* frame_read_pointer = (int *)input_frame;
-
-
-    //int byte_read_for_now = 0;
-    // while(byte_read_for_now < (*hp).data_size){
-    //   if(read_frame(frame_read_pointer,channels,bytes_per_sample) == 0){
-    //     return 0;
-    //   }
-
-    //   byte_read_for_now = byte_read_for_now +(channels * bytes_per_sample);
-    // }
-
-
-
-
-    // //write the frame
-    // int* frame_write_pointer = (int *)input_frame;
-
-    // int byte_written_for_now = 0;
-
-    // while(byte_written_for_now < (*hp).data_size){
-    //   if (write_frame(frame_write_pointer,channels,bytes_per_sample) == 0){
-    //     return 0;
-    //   }
-
-    //   byte_written_for_now = byte_written_for_now + (bytes_per_sample * channels);
-    // }
-
+    //write the frame
     write_frame((int*)input_frame,channels,bytes_per_sample);
 
 
@@ -805,4 +781,22 @@ int write_frame(int *fp, int channels, int bytes_per_sample){
         }
 
         return 1;
+}
+
+
+
+void speedUp(int num_of_frame, int factor, int channels, int bytes_per_sample){
+        int frame_read = 0;
+
+        while(frame_read < num_of_frame){
+            if(frame_read % factor != 0){
+                read_frame((int*)input_frame,channels,bytes_per_sample);
+            }
+            else{
+                read_frame((int*)input_frame,channels,bytes_per_sample);
+                write_frame((int*)input_frame,channels,bytes_per_sample);
+            }
+            frame_read++;
+        }
+
 }
