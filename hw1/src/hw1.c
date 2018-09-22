@@ -17,6 +17,8 @@
 #endif
 
 void speedUp(int num_of_frame, int factor, int channels, int bytes_per_sample);
+void crypt(unsigned int seed, int num_of_frame, int channels, int bytes_per_sample);
+//int getNumFromCMD(char** argv);
 
 int verifyFactor(char** argv){
     int length = 0;
@@ -473,7 +475,6 @@ int validargs(int argc, char** argv)
 
 
 
-
 /**
  * @brief  Recodes a Sun audio (.au) format audio stream, reading the stream
  * from standard input and writing the recoded stream to standard output.
@@ -503,9 +504,12 @@ int recode(char **argv){
     if(write_annotation(input_annotation,annotation_size) == 0)
         return 0;
 
+    // if(((global_options >> 59)& 1) != 1){
+
+    // }
+
+
     //reading the frame
-
-
     int channels = (*hp).channels;
     int bytes_per_sample = (*hp).encoding - 1 ;
 
@@ -515,7 +519,11 @@ int recode(char **argv){
         speedUp(num_of_frame, factor, channels,bytes_per_sample);
     }
 
-
+    if (((global_options >> 60) & 1) == 1){
+        unsigned int key = global_options & 4294967295;
+        int num_of_frame = (*hp).data_size/(channels*bytes_per_sample);
+        crypt(key, num_of_frame, channels,bytes_per_sample);
+    }
 
     return 1;
 
