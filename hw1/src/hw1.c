@@ -18,7 +18,7 @@
 
 void speedUp(int num_of_frame, int factor, int channels, int bytes_per_sample);
 void crypt(unsigned int seed, int num_of_frame, int channels, int bytes_per_sample);
-//int getNumFromCMD(char** argv);
+
 
 int verifyFactor(char** argv){
     int length = 0;
@@ -504,10 +504,6 @@ int recode(char **argv){
     if(write_annotation(input_annotation,annotation_size) == 0)
         return 0;
 
-    // if(((global_options >> 59)& 1) != 1){
-
-    // }
-
 
     //reading the frame
     int channels = (*hp).channels;
@@ -726,10 +722,8 @@ int write_annotation(char *ap, unsigned int size){
         return 0;
     int i;
     for(i = 0; i < size; i++){
-        debug("%c",*ap);
         if(putchar(*ap) == EOF)
             return 0;
-        debug("%c",*ap);
         ap = ap + 1;
     }
     return 1;
