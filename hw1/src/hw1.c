@@ -509,19 +509,13 @@ int recode(char **argv){
     int channels = (*hp).channels;
     int bytes_per_sample = (*hp).encoding - 1 ;
 
-    //read the frame
-    //read_frame((int*)input_frame,channels,bytes_per_sample);
+    if (((global_options >> 62) & 1) && ((global_options >> 48) & 1023) != 0){
+        int factor = ((global_options >> 48) & 1023) + 1;
+        int num_of_frame = (*hp).data_size/(channels*bytes_per_sample);
+        speedUp(num_of_frame, factor, channels,bytes_per_sample);
+    }
 
-    //write the frame
-    //write_frame((int*)input_frame,channels,bytes_per_sample);
 
-
-    //speedUp function testing
-    debug("%lu",global_options);
-    int factor = ((global_options >> 48) & 1023) + 1;
-    debug("%d",factor);
-    int num_of_frame = (*hp).data_size/(channels*bytes_per_sample);
-    speedUp(num_of_frame, factor, channels,bytes_per_sample);
 
     return 1;
 
@@ -794,17 +788,31 @@ int write_frame(int *fp, int channels, int bytes_per_sample){
 
 
 void speedUp(int num_of_frame, int factor, int channels, int bytes_per_sample){
-        int frame_read = 0;
-
-        while(frame_read < num_of_frame){
-            if(frame_read % factor != 0){
-                read_frame((int*)input_frame,channels,bytes_per_sample);
-            }
-            else{
-                read_frame((int*)input_frame,channels,bytes_per_sample);
-                write_frame((int*)input_frame,channels,bytes_per_sample);
-            }
-            frame_read++;
+    int frame_read = 0;
+    while(frame_read < num_of_frame){
+        if(frame_read % factor != 0){
+            read_frame((int*)input_frame,channels,bytes_per_sample);
         }
+        else{
+            read_frame((int*)input_frame,channels,bytes_per_sample);
+            write_frame((int*)input_frame,channels,bytes_per_sample);
+        }
+        frame_read++;
+    }
 
+}
+
+void crypt(unsigned int seed, int num_of_frame, int channels, int bytes_per_sample){
+    mysrand(seed);
+    int byte_in_each_frame = channels * bytes_per_sample;
+
+    for(int i = 0; i < num_of_frame; i++){
+            read_frame((int*)output_frame,channels,bytes_per_sample);
+            char* frame_pointer = output_frame;
+            for(int j = 0; j < byte_in_each_frame; j++){
+                *frame_pointer = *frame_pointer ^ myrand32();
+                frame_pointer++;
+            }
+            write_frame((int*)output_frame,channels,bytes_per_sample);
+    }
 }
