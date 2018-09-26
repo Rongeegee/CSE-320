@@ -3,13 +3,15 @@
  * Normalize scores, using the computed statistics.
  */
 
-#include<stddef.h>
-#include<stdio.h>
+#include <stddef.h>
+#include <stdio.h>
 #include "global.h"
 #include "gradedb.h"
 #include "stats.h"
 #include "allocate.h"
 #include "normal.h"
+#include "error.c"
+#include <string.h>
 
 /*
  * Normalize scores:
@@ -71,6 +73,8 @@ Stats *s;
               }
            }
         }
+        //maybe wrong, from adit
+        (*s).cstats = csp;
 }
 
 /*
@@ -148,7 +152,11 @@ Sectionstats *ssp;
                    else if(s == fp->score)
                         return((float)fp->numless*100.0/n);
                 }
+
+                //need to fix this later, the number being returned might be wrong.
+                return 0;
         }
+
 }
 
 /*
