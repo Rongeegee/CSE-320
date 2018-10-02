@@ -4,6 +4,7 @@
  */
 
 #include <stddef.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "global.h"
@@ -11,6 +12,11 @@
 #include "stats.h"
 #include "allocate.h"
 #include "read.h"
+#include "error.h"
+//function prototypes;
+int istoken();
+int checktoken(char*);
+int tokensize();
 
 /*
  * Input file stack
@@ -409,8 +415,8 @@ Atype readatype()
 
 int istoken()
 {
-        if(tokenptr != tokenend) return(TRUE);
-        else return(FALSE);
+        if(tokenptr != tokenend) return(1);
+        else return(0);
 }
 
 /*
@@ -608,7 +614,7 @@ void previousfile()
         fprintf(stderr, " ]");
 }
 
-void pushfile(e)
+void pushfile()
 {
         Ifile *nfile;
         char *n;

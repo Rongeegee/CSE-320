@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <getopt.h>
+#include <string.h>
 #include "version.h"
 #include "global.h"
 #include "gradedb.h"
@@ -11,6 +12,10 @@
 #include "write.h"
 #include "normal.h"
 #include "sort.h"
+#include "error.h"
+#include "report.h"
+
+
 
 /*
  * Course grade computation program
@@ -184,7 +189,7 @@ char *argv[];
         if(summaries) reportquantilesummaries(stdout, s);
         if(histograms) reporthistos(stdout, c, s);
         if(scores) reportscores(stdout, c, nonames);
-        if(tabsep) reporttabs(stdout, c, nonames);
+        if(tabsep) reporttabs(stdout, c);
 
         fprintf(stderr, "\nProcessing complete.\n");
         printf("%d warning%s issued.\n", warnings+errors,

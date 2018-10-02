@@ -10,8 +10,8 @@
 #include "stats.h"
 #include "allocate.h"
 #include "normal.h"
-#include "error.c"
 #include <string.h>
+#include "error.h"
 
 /*
  * Normalize scores:
@@ -152,10 +152,9 @@ Sectionstats *ssp;
                    else if(s == fp->score)
                         return((float)fp->numless*100.0/n);
                 }
-
-                //need to fix this later, the number being returned might be wrong.
-                return 0;
         }
+        //need to fix this later, the number being returned might be wrong.
+        return 0;
 
 }
 

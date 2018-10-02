@@ -8,7 +8,7 @@
 #include "global.h"
 #include "gradedb.h"
 #include "write.h"
-#include "error.c"
+#include "error.h"
 
 void writeprofessor(fd, p)
 FILE *fd;
