@@ -34,6 +34,7 @@
 #define ALLOUTPUT      10
 #define SORTBY         11
 #define NONAMES        12
+#define OUTPUT         13
 
 static struct option_info {
         unsigned int val;
@@ -65,10 +66,12 @@ static struct option_info {
                   "Print tab-separated table of student scores."},
  {ALLOUTPUT,      "all",       'a',      no_argument, NULL,
                   "Print all reports."},
+ {SORTBY,         "sortby",    'k',      required_argument, "key",
+                  "Sort by {name, id, score}."},
  {NONAMES,        "nonames",   'n',      no_argument, NULL,
                   "Suppress printing of students' names."},
- {SORTBY,         "sortby",    'k',      required_argument, "key",
-                  "Sort by {name, id, score}."}
+ {OUTPUT,         "output",    'o',      required_argument, "outfile",
+                  "Write output to file, rather than standard output."}
 };
 
 #define NUM_OPTIONS (14)
@@ -155,6 +158,7 @@ char *argv[];
         if(report == collate) {
                 fprintf(stderr, "Exactly one of '%s' or '%s' is required.\n\n",
                         option_table[REPORT].name, option_table[COLLATE].name);
+                //segmentation fault happens in the usage
                 usage(argv[0]);
         }
 
@@ -214,6 +218,7 @@ char *name;
                     sprintf(arg, " <%.10s>", opt->argname);
                 else
                     sprintf(arg, "%.13s", "");
+                //segmentation fault in the fprintf statement below
                 fprintf(stderr, "\t%s--%-10s%-13s\t%s\n",
                             optchr, opt->name, arg, opt->descr);
                 opt++;
