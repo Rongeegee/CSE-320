@@ -2,6 +2,7 @@
 #include <criterion/criterion.h>
 #include "gradedb.h"
 #include "read.h"
+#include "report.h"
 #include "write.h"
 #include "sort.h"
 #include "stats.h"
@@ -23,11 +24,9 @@ Test(basic_suite, read_file_test) {
 
 Test(basic_suite, stats_test) {
     Course *c;
-    Stats *s;
     c = readfile(TEST_FILE);
     cr_assert_eq(errors, 0, "There were errors reported when reading test data.\n");
     cr_assert_neq(c, NULL, "NULL pointer returned from readfile().\n");
-    s = statistics(c);
     cr_assert_neq(c, NULL, "NULL pointer returned from statistics().\n");
 }
 
@@ -48,16 +47,14 @@ Test(basic_suite, collate_test) {
 
 Test(basic_suite, tabsep_test) {
     Course *c;
-    Stats *s;
     c = readfile(TEST_FILE);
     cr_assert_eq(errors, 0, "There were errors reported when reading test data.\n");
     cr_assert_neq(c, NULL, "NULL pointer returned from readfile().\n");
-    s = statistics(c);
     cr_assert_neq(c, NULL, "NULL pointer returned from statistics().\n");
     sortrosters(c, comparename);
     FILE *f = fopen(TABSEP_OUTPUT, "w");
     cr_assert_neq(f, NULL, "Error opening test output file.\n");
-    reporttabs(f, c, 0);
+    reporttabs(f, c);
     fclose(f);
     char cmd[100];
     sprintf(cmd, "cmp %s %s", TABSEP_OUTPUT, TABSEP_REF);
