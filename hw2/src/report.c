@@ -29,9 +29,13 @@ Course *c;
         today = ctime(&now);
 
         fprintf(fd, "GRADES FOR: %s\n", c->title);
-        if(c->professor)
-                fprintf(fd, "PROFESSOR : %s %s\n",
+        //segmentation fault in the if statement below, can't print the surname
+        if(c->professor){
+          fprintf(fd, "PROFESSOR : %s %s\n",
                         c->professor->name, c->professor->surname);
+        }
+
+
         fprintf(fd, "DATA FILE : %s\n", fn);
         fprintf(fd, "RUN DATE  : %s\n", today);
         fprintf(fd, "\n");

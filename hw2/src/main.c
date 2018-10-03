@@ -76,7 +76,7 @@ static struct option_info {
 
 #define NUM_OPTIONS (14)
 
-static char *short_options = "";
+static char *short_options = "o:nk:acr";
 static struct option long_options[NUM_OPTIONS];
 
 static void init_options() {
@@ -158,7 +158,6 @@ char *argv[];
         if(report == collate) {
                 fprintf(stderr, "Exactly one of '%s' or '%s' is required.\n\n",
                         option_table[REPORT].name, option_table[COLLATE].name);
-                //segmentation fault happens in the usage
                 usage(argv[0]);
         }
 
@@ -184,7 +183,8 @@ char *argv[];
         }
         sortrosters(c, compare);
 
-        fprintf(stderr, "Producing reports...\n");
+        fprintf(stderr, "Prod...\n");
+        //segmentation occurs in the reportparams function below
         reportparams(stdout, ifile, c);
         if(moments) reportmoments(stdout, s);
         if(composite) reportcomposites(stdout, c, nonames);
@@ -218,7 +218,7 @@ char *name;
                     sprintf(arg, " <%.10s>", opt->argname);
                 else
                     sprintf(arg, "%.13s", "");
-                //segmentation fault in the fprintf statement below
+
                 fprintf(stderr, "\t%s--%-10s%-13s\t%s\n",
                             optchr, opt->name, arg, opt->descr);
                 opt++;

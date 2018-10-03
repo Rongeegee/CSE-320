@@ -28,7 +28,7 @@ Ifile *ifile;
  * Token readahead buffer
  */
 
-char tokenbuf[32];
+char tokenbuf[1024];
 char *tokenptr = tokenbuf;
 char *tokenend = tokenbuf;
 
@@ -46,6 +46,7 @@ char *root;
 
         fprintf(stderr, "[ %s", root);
         gobbleblanklines();
+        //segmentation fault in readcourse function
         c = readcourse();
         gobbleblanklines();
         expecteof();
@@ -60,6 +61,7 @@ Course *readcourse()
         expecttoken("COURSE");
         c = newcourse();
         c->number = readid();
+        //segmentation fault in readname function
         c->title = readname();
         c->professor = readprofessor();
         c->assignments = readassignments();
@@ -115,6 +117,7 @@ Assignment *readassignments()
         a->next = readassignments();
         return(a);
 }
+
 
 Section *readsections(a)
 Assignment *a;
@@ -367,11 +370,13 @@ Surname readsurname()
         }
         flushtoken();
         return(s);
+
 }
 
 Name readname()
 {
         Name n;
+        //segmentation fault in advanceeol function
         advanceeol();
         if(istoken()) n = newstring(tokenptr, tokensize());
         else {
@@ -526,6 +531,7 @@ void advanceeol()
         if(istoken()) error("(%s:%d) Flushing unread input token.", ifile->name, ifile->line);
         flushtoken();
         gobblewhitespace();
+        // the following while loop causes segmentation fault in the while loop
         while((c = getc(ifile->fd)) != EOF) {
                 if(c == '\n') {
                         ungetc(c, ifile->fd);
@@ -608,7 +614,7 @@ void previousfile()
         Ifile *prev;
         if((prev = ifile->prev) == NULL)
                 fatal("(%s:%d) No previous file.", ifile->name, ifile->line);
-        free(ifile);
+        //free(ifile);
         fclose(ifile->fd);
         ifile = prev;
         fprintf(stderr, " ]");

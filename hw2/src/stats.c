@@ -185,7 +185,9 @@ Freqs *afp;
                         }
                 } else continue;
         }
-        if(sfp == NULL) {       /* insertion into empty list */
+        if(fp == NULL) {
+              /* insertion into empty list */
+                sfp = newfreqs();
                 sfp->next = NULL;
                 sfp->score = scp->grade;
                 sfp->count = 1;
