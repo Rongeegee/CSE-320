@@ -27,8 +27,7 @@ Test(basic_suite, stats_test) {
     c = readfile(TEST_FILE);
     cr_assert_eq(errors, 0, "There were errors reported when reading test data.\n");
     cr_assert_neq(c, NULL, "NULL pointer returned from readfile().\n");
-    s = statistics(c);
-    cr_assert_neq(s, NULL, "NULL pointer returned from statistics().\n");
+    cr_assert_neq(c, NULL, "NULL pointer returned from statistics().\n");
 }
 
 Test(basic_suite, collate_test) {
@@ -38,8 +37,6 @@ Test(basic_suite, collate_test) {
     cr_assert_neq(c, NULL, "NULL pointer returned from readfile().\n");
     FILE *f = fopen(COLLATED_OUTPUT, "w");
     cr_assert_neq(f, NULL, "Error opening test output file.\n");
-    statistics(c);
-    sortrosters(c, comparename);
     writecourse(f, c);
     fclose(f);
     char cmd[100];
@@ -53,10 +50,7 @@ Test(basic_suite, tabsep_test) {
     c = readfile(TEST_FILE);
     cr_assert_eq(errors, 0, "There were errors reported when reading test data.\n");
     cr_assert_neq(c, NULL, "NULL pointer returned from readfile().\n");
-    s = statistics(c);
-    cr_assert_neq(s, NULL, "NULL pointer returned from statistics().\n");
-    normalize(c);
-    composites(c);
+    cr_assert_neq(c, NULL, "NULL pointer returned from statistics().\n");
     sortrosters(c, comparename);
     FILE *f = fopen(TABSEP_OUTPUT, "w");
     cr_assert_neq(f, NULL, "Error opening test output file.\n");
