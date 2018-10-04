@@ -46,7 +46,6 @@ char *root;
 
         fprintf(stderr, "[ %s", root);
         gobbleblanklines();
-        //segmentation fault in readcourse function
         c = readcourse();
         gobbleblanklines();
         expecteof();
@@ -614,8 +613,8 @@ void previousfile()
         Ifile *prev;
         if((prev = ifile->prev) == NULL)
                 fatal("(%s:%d) No previous file.", ifile->name, ifile->line);
-        //free(ifile);
         fclose(ifile->fd);
+        free(ifile);
         ifile = prev;
         fprintf(stderr, " ]");
 }

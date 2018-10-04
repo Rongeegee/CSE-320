@@ -154,7 +154,7 @@ Sectionstats *ssp;
                 }
         }
         //need to fix this later, the number being returned might be wrong.
-        return 0;
+        return s;
 
 }
 

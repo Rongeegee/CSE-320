@@ -162,7 +162,7 @@ Freqs *count_score(scp, afp)
 Score *scp;
 Freqs *afp;
 {
-        Freqs *fp, *sfp;
+        Freqs *fp = NULL, *sfp = NULL;
 
         for(fp = afp; fp != NULL; sfp = fp, fp = fp->next) {
                 if(fp->score == scp->grade) {

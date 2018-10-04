@@ -184,7 +184,6 @@ char *argv[];
         sortrosters(c, compare);
 
         fprintf(stderr, "Prod...\n");
-        //segmentation occurs in the reportparams function below
         reportparams(stdout, ifile, c);
         if(moments) reportmoments(stdout, s);
         if(composite) reportcomposites(stdout, c, nonames);
