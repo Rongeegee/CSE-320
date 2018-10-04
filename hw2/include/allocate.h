@@ -1,3 +1,5 @@
+#ifndef __ALLOCATE_HEADER__
+#define __ALOCATE_HEADER__
 /*
  * Type definitions for memory allocation functions
  */
@@ -19,3 +21,4 @@ Ifile *newifile();
 
 char *memerr;
 
+#endif

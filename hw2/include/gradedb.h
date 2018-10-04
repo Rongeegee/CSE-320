@@ -1,4 +1,5 @@
-
+#ifndef __GRADEDB_HEADER__
+#define __GRADEDB_HEADER__
 /*
  * Data structures stored in grades database
  */
@@ -81,3 +82,4 @@ typedef struct {
         Student *roster;                /* List of students in course */
 } Course;
 
+#endif

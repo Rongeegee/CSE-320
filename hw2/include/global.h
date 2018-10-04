@@ -1,4 +1,5 @@
-
+#ifndef __GLOBAL_HEADER__
+#define __GLOBAL_HEADER__
 /*
  * Global definitions
  */
@@ -15,3 +16,4 @@ typedef struct Ifile {
         struct Ifile *prev;
 } Ifile;
 
+#endif

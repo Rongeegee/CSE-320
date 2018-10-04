@@ -76,7 +76,7 @@ static struct option_info {
 
 #define NUM_OPTIONS (14)
 
-static char *short_options = "o:nk:acr";
+static char *short_options = "onkacr";
 static struct option long_options[NUM_OPTIONS];
 
 static void init_options() {
@@ -111,10 +111,27 @@ char *argv[];
         while(optind < argc) {
             if((optval = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
                 switch(optval) {
+                case 114:   report++; break;
                 case REPORT: report++; break;
+                case 99: collate++; break;
                 case COLLATE: collate++; break;
                 case TABSEP: tabsep++; break;
+                case 110: nonames++; break;
                 case NONAMES: nonames++; break;
+                case 107:
+                    if(!strcmp(optarg, "name"))
+                        compare = comparename;
+                    else if(!strcmp(optarg, "id"))
+                        compare = compareid;
+                    else if(!strcmp(optarg, "score"))
+                        compare = comparescore;
+                    else {
+                        fprintf(stderr,
+                                "Option '%s' requires argument from {name, id, score}.\n\n",
+                                option_table[(int)optval].name);
+                        usage(argv[0]);
+                    }
+                    break;
                 case SORTBY:
                     if(!strcmp(optarg, "name"))
                         compare = comparename;
@@ -136,6 +153,10 @@ char *argv[];
                 case COMPOSITES: composite++; break;
                 case INDIVIDUALS: scores++; break;
                 case HISTOGRAMS: histograms++; break;
+                case 97:
+                    freqs++; quantiles++; summaries++; moments++;
+                    composite++; scores++; histograms++; tabsep++;
+                    break;
                 case ALLOUTPUT:
                     freqs++; quantiles++; summaries++; moments++;
                     composite++; scores++; histograms++; tabsep++;

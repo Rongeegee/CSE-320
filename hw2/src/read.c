@@ -642,5 +642,6 @@ void pushfile()
         ifile = nfile;
         fprintf(stderr, " [ %s", n);
         gobbleblanklines();
+        free(n);
 }
 

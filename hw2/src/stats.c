@@ -185,7 +185,7 @@ Freqs *afp;
                         }
                 } else continue;
         }
-        if(fp == NULL) {
+        if(sfp == NULL) {
               /* insertion into empty list */
                 sfp = newfreqs();
                 sfp->next = NULL;
