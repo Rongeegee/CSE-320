@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -76,7 +75,7 @@ static struct option_info {
 
 #define NUM_OPTIONS (14)
 
-static char *short_options = "racokn";
+static char *short_options = "racno:k:";
 static struct option long_options[NUM_OPTIONS];
 
 static void init_options() {
@@ -94,6 +93,7 @@ static int report, collate, freqs, quantiles, summaries, moments,
            scores, composite, histograms, tabsep, nonames,output;
 
 static void usage();
+
 
 int main(argc, argv)
 int argc;
@@ -115,6 +115,7 @@ char *argv[];
                 case COLLATE: collate++; break;
                 case TABSEP: tabsep++; break;
                 case NONAMES: nonames++; break;
+                case OUTPUT: stdout = fopen(optarg,"w"); output++; break;
                 case SORTBY:
                     if(!strcmp(optarg, "name"))
                         compare = comparename;
@@ -136,7 +137,6 @@ char *argv[];
                 case COMPOSITES: composite++; break;
                 case INDIVIDUALS: scores++; break;
                 case HISTOGRAMS: histograms++; break;
-                case OUTPUT: output++; break;
                 case ALLOUTPUT:
                     freqs++; quantiles++; summaries++; moments++;
                     composite++; scores++; histograms++; tabsep++;
@@ -162,11 +162,6 @@ char *argv[];
                 usage(argv[0]);
         }
 
-        if(output){
-            argv = argv + 3;
-            char* fileName = *argv;
-            stdout = fopen(fileName, "w");
-        }
 
         fprintf(stderr, "Reading input data...\n");
         c = readfile(ifile);
@@ -175,6 +170,7 @@ char *argv[];
                   errors, errors == 1 ? " was": "s were");
            exit(EXIT_FAILURE);
         }
+
 
         fprintf(stderr, "Calculating statistics...\n");
         s = statistics(c);
