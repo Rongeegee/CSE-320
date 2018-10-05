@@ -140,6 +140,9 @@ char *argv[];
                     freqs++; quantiles++; summaries++; moments++;
                     composite++; scores++; histograms++; tabsep++;
                     break;
+                case OUTPUT:
+
+                    break;
                 case '?':
                     usage(argv[0]);
                     break;
