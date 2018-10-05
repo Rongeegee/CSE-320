@@ -91,7 +91,7 @@ static void init_options() {
 }
 
 static int report, collate, freqs, quantiles, summaries, moments,
-           scores, composite, histograms, tabsep, nonames;
+           scores, composite, histograms, tabsep, nonames,output;
 
 static void usage();
 
@@ -136,12 +136,10 @@ char *argv[];
                 case COMPOSITES: composite++; break;
                 case INDIVIDUALS: scores++; break;
                 case HISTOGRAMS: histograms++; break;
+                case OUTPUT: output++; break;
                 case ALLOUTPUT:
                     freqs++; quantiles++; summaries++; moments++;
                     composite++; scores++; histograms++; tabsep++;
-                    break;
-                case OUTPUT:
-
                     break;
                 case '?':
                     usage(argv[0]);
@@ -185,6 +183,12 @@ char *argv[];
                 exit(errors ? EXIT_FAILURE : EXIT_SUCCESS);
         }
         sortrosters(c, compare);
+
+        if(output){
+            argv = argv + 3;
+            char* fileName = *argv;
+            stdout = fopen(fileName, "w");
+        }
 
         fprintf(stderr, "Prod...\n");
         reportparams(stdout, ifile, c);
