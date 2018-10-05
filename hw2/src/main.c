@@ -148,7 +148,7 @@ char *argv[];
                 default:
                     break;
                 }
-                if(collate<1 || report<1){
+                if(collate<1 && report<1){
                     usage(argv[0]);
                 }
 
