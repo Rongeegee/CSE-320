@@ -162,6 +162,12 @@ char *argv[];
                 usage(argv[0]);
         }
 
+        if(output){
+            argv = argv + 3;
+            char* fileName = *argv;
+            stdout = fopen(fileName, "w");
+        }
+
         fprintf(stderr, "Reading input data...\n");
         c = readfile(ifile);
         if(errors) {
@@ -184,11 +190,7 @@ char *argv[];
         }
         sortrosters(c, compare);
 
-        if(output){
-            argv = argv + 3;
-            char* fileName = *argv;
-            stdout = fopen(fileName, "w");
-        }
+
 
         fprintf(stderr, "Prod...\n");
         reportparams(stdout, ifile, c);
