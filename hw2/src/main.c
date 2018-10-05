@@ -21,8 +21,8 @@
  * Course grade computation program
  */
 
-#define REPORT          0
-#define COLLATE         1
+#define REPORT          'r'
+#define COLLATE         'c'
 #define FREQUENCIES     2
 #define QUANTILES       3
 #define SUMMARIES       4
@@ -31,10 +31,10 @@
 #define INDIVIDUALS     7
 #define HISTOGRAMS      8
 #define TABSEP          9
-#define ALLOUTPUT      10
-#define SORTBY         11
-#define NONAMES        12
-#define OUTPUT         13
+#define ALLOUTPUT      'a'
+#define SORTBY         'k'
+#define NONAMES        'n'
+#define OUTPUT         'o'
 
 static struct option_info {
         unsigned int val;
@@ -76,7 +76,7 @@ static struct option_info {
 
 #define NUM_OPTIONS (14)
 
-static char *short_options = "onkacr";
+static char *short_options = "racokn";
 static struct option long_options[NUM_OPTIONS];
 
 static void init_options() {
@@ -111,27 +111,10 @@ char *argv[];
         while(optind < argc) {
             if((optval = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
                 switch(optval) {
-                case 114:   report++; break;
                 case REPORT: report++; break;
-                case 99: collate++; break;
                 case COLLATE: collate++; break;
                 case TABSEP: tabsep++; break;
-                case 110: nonames++; break;
                 case NONAMES: nonames++; break;
-                case 107:
-                    if(!strcmp(optarg, "name"))
-                        compare = comparename;
-                    else if(!strcmp(optarg, "id"))
-                        compare = compareid;
-                    else if(!strcmp(optarg, "score"))
-                        compare = comparescore;
-                    else {
-                        fprintf(stderr,
-                                "Option '%s' requires argument from {name, id, score}.\n\n",
-                                option_table[(int)optval].name);
-                        usage(argv[0]);
-                    }
-                    break;
                 case SORTBY:
                     if(!strcmp(optarg, "name"))
                         compare = comparename;
@@ -153,10 +136,6 @@ char *argv[];
                 case COMPOSITES: composite++; break;
                 case INDIVIDUALS: scores++; break;
                 case HISTOGRAMS: histograms++; break;
-                case 97:
-                    freqs++; quantiles++; summaries++; moments++;
-                    composite++; scores++; histograms++; tabsep++;
-                    break;
                 case ALLOUTPUT:
                     freqs++; quantiles++; summaries++; moments++;
                     composite++; scores++; histograms++; tabsep++;
@@ -193,7 +172,7 @@ char *argv[];
         fprintf(stderr, "Calculating statistics...\n");
         s = statistics(c);
         if(s == NULL) fatal("There is no data from which to generate reports.");
-        normalize(c, s);
+        normalize(c);
         composites(c);
         sortrosters(c, comparename);
         checkfordups(c->roster);

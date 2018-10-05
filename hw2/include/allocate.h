@@ -19,6 +19,6 @@ Sectionstats *newsectionstats();
 Stats *newstats();
 Ifile *newifile();
 
-char *memerr;
+extern char *memerr;
 
 #endif

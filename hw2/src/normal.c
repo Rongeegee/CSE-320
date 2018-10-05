@@ -22,9 +22,8 @@
  *              options set for that score and for the assignment.
  */
 
-void normalize(c, s)
+void normalize(c)
 Course *c;
-Stats *s;
 {
         Student *stp;
         Score *rscp, *nscp;
@@ -73,8 +72,6 @@ Stats *s;
               }
            }
         }
-        //maybe wrong, from adit
-        (*s).cstats = csp;
 }
 
 /*
