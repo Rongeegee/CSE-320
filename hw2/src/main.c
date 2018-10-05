@@ -117,6 +117,7 @@ char *argv[];
                 case NONAMES: nonames++; break;
                 case OUTPUT: stdout = fopen(optarg,"w"); output++; break;
                 case SORTBY:
+                    if(optind >= argc) usage(argv[0]);
                     if(!strcmp(optarg, "name"))
                         compare = comparename;
                     else if(!strcmp(optarg, "id"))
@@ -147,6 +148,11 @@ char *argv[];
                 default:
                     break;
                 }
+                if(collate<1 || report<1){
+                    usage(argv[0]);
+                }
+
+
             } else {
                 break;
             }
