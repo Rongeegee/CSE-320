@@ -151,6 +151,9 @@ char *argv[];
                 if(collate<1 && report<1){
                     usage(argv[0]);
                 }
+                else if(report > 1 || collate > 1 || output > 1){
+                    usage(argv[0]);
+                }
 
 
             } else {
