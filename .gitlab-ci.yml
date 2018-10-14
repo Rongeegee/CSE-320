@@ -1,8 +1,13 @@
 image: hwrunner:latest
 variables:
     GIT_SSL_NO_VERIFY: "true"
+<<<<<<< HEAD
     EXEC: grades
     HW_DIR: hw2
+=======
+    EXEC: sfmm
+    HW_DIR: hw3
+>>>>>>> HW3_CODE/master
 before_script:
     - make clean all -C ${HW_DIR}
 stages:
@@ -16,7 +21,11 @@ build:
 run:
     stage: run
     script:
+<<<<<<< HEAD
         - cd ${HW_DIR} && bin/${EXEC} -r cse307.dat
+=======
+        - cd ${HW_DIR} && bin/${EXEC}
+>>>>>>> HW3_CODE/master
 test:
     stage: test
     script:
