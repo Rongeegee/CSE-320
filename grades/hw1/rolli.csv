@@ -1,0 +1,69 @@
+TEST NAME,POINTS,OUT OF,NOTES
+writer_tests_suite/write_frame_test_basic_1,1,1,
+writer_tests_suite/write_frame_test_basic,1,1,
+writer_tests_suite/write_annotation_test_basic_2,0,1,tests/write_tests.c:134: An error occurred reading back the annotation. tests/write_tests.c:126: Invalid return for write_annotation.  Got: 0 | Expected: 1
+writer_tests_suite/write_annotation_test_basic_1,0,1,tests/write_tests.c:108: An error occurred reading back the annotation. tests/write_tests.c:100: Invalid return for write_annotation.  Got: 0 | Expected: 1
+writer_tests_suite/write_annotation_test_basic,0,1,tests/write_tests.c:82: An error occurred reading back the annotation. tests/write_tests.c:74: Invalid return for write_annotation.  Got: 0 | Expected: 1
+write_tests_suite/write_header_test,1,1,
+read_tests_suite/valid_read_frame_1,1,1,
+read_tests_suite/valid_read_frame,0,1,tests/read_tests.c:104: Read frames did not return the expected value
+read_tests_suite/read_annotation_test_basic_2,0,1,tests/read_tests.c:67: Read annotations does not return the same annotation
+read_tests_suite/read_annotation_test_basic_1,0,1,tests/read_tests.c:52: Read annotations does not return the same annotation
+read_tests_suite/read_annotation_test_basic,0,1,tests/read_tests.c:37: Read annotations does not return the same annotation
+read_tests_suite/invalid_header_offset_not_multiple_8_test,1,1,
+hw1_tests_suite/validargs_speedup_test_4,1,1,
+hw1_tests_suite/validargs_speedup_test_3,1,1,
+hw1_tests_suite/validargs_speedup_test_2,1,1,
+hw1_tests_suite/validargs_speedup_test_1,1,1,
+hw1_tests_suite/validargs_speedup_test,1,1,
+hw1_tests_suite/validargs_speedup_default_factor_test,1,1,
+hw1_tests_suite/validargs_speedup_p_option_test,1,1,
+hw1_tests_suite/validargs_speeddown_test_4,1,1,
+hw1_tests_suite/validargs_speeddown_test_3,1,1,
+hw1_tests_suite/validargs_speeddown_test_2,1,1,
+hw1_tests_suite/validargs_speeddown_test,1,1,
+hw1_tests_suite/validargs_slow_down_max_factor_test,1,1,
+hw1_tests_suite/validargs_invalid_option_order_test,1,1,
+hw1_tests_suite/validargs_invalid_key_test,1,1,
+hw1_tests_suite/validargs_invalid_factor_test,1,1,
+hw1_tests_suite/validargs_help_test,1,1,
+hw1_tests_suite/validargs_crypt_test_3,1,1,
+hw1_tests_suite/validargs_crypt_test_2,1,1,
+hw1_tests_suite/validargs_crypt_test_0,1,1,
+hw1_tests_suite/validargs_crypt_test,0,1,tests/validargs_tests.c:154: Key doesn't have the correct value. Got: deadbee | Expected: de0d9eaf tests/validargs_tests.c:146: Invalid return for valid args.  Got: 0 | Expected: 1
+hw1_tests_suite/validargs_crypt_no_key_option_with_p_option_test,0,1,tests/validargs_tests.c:121: -p mode bit wasn't set. Got: 0 tests/validargs_tests.c:115: Invalid return for valid args.  Got: 0 | Expected: 1
+hw1_tests_suite/speed_up_test_triangle_5,0,1,tests/end2end_tests.c:75: Output did not match the contents of the reference file
+hw1_tests_suite/speed_up_test_triangle_4,0,1,tests/end2end_tests.c:61: Output did not match the contents of the reference file
+hw1_tests_suite/speed_up_test_2channels4bytes_7,0,1,tests/end2end_tests.c:103: Output did not match the contents of the reference file
+hw1_tests_suite/speed_up_test_2channels3bytes_6,0,1,tests/end2end_tests.c:89: Output did not match the contents of the reference file
+hw1_tests_suite/speed_up_test_2channels2bytes_3,0,1,tests/end2end_tests.c:47: Output did not match the contents of the reference file
+hw1_tests_suite/speed_up_test_2channels2bytes_2,0,1,tests/end2end_tests.c:34: Output did not match the contents of the reference file
+hw1_tests_suite/speed_up_test_2channels2bytes_1,0,1,tests/end2end_tests.c:20: Output did not match the contents of the reference file
+hw1_tests_suite/speed_up_test8,0,1,tests/end2end2_tests.c:61: Output did not match the contents of the reference file
+hw1_tests_suite/speed_up_test7,0,1,tests/end2end2_tests.c:46: Output did not match the contents of the reference file
+hw1_tests_suite/speed_up_test6,0,1,tests/end2end2_tests.c:33: Output did not match the contents of the reference file
+hw1_tests_suite/slow_down_test_triangle_4,0,1,tests/end2end_tests.c:158: Output did not match the contents of the reference file
+hw1_tests_suite/speed_up_test2,0,1,tests/end2end2_tests.c:20: Output did not match the contents of the reference file
+hw1_tests_suite/slow_down_test_2channels4bytes_6,0,1,tests/end2end_tests.c:186: Output did not match the contents of the reference file
+hw1_tests_suite/slow_down_test_2channels3bytes_5,0,1,tests/end2end_tests.c:172: Output did not match the contents of the reference file
+hw1_tests_suite/slow_down_test_2channels2bytes_3,0,1,tests/end2end_tests.c:143: Output did not match the contents of the reference file
+hw1_tests_suite/slow_down_test_2channels2bytes_2,0,1,tests/end2end_tests.c:130: Output did not match the contents of the reference file
+hw1_tests_suite/slow_down_test_2channels2bytes_1,0,1,tests/end2end_tests.c:117: Output did not match the contents of the reference file
+hw1_tests_suite/slow_down_test9,0,1,tests/end2end2_tests.c:114: Output did not match the contents of the reference file
+hw1_tests_suite/slow_down_test7,0,1,tests/end2end2_tests.c:100: Output did not match the contents of the reference file
+hw1_tests_suite/slow_down_test6,0,1,tests/end2end2_tests.c:87: Output did not match the contents of the reference file
+hw1_tests_suite/slow_down_test5,0,1,tests/end2end2_tests.c:74: Output did not match the contents of the reference file
+hw1_tests_suite/slow_down_test10,0,1,tests/end2end2_tests.c:128: Output did not match the contents of the reference file
+hw1_tests_suite/help_system_test_with_extra_args,1,1,
+hw1_tests_suite/help_system_test_2,1,1,
+hw1_tests_suite/crypt_test_triangle_4,0,1,tests/end2end_tests.c:240: Output did not match the contents of the reference file
+hw1_tests_suite/crypt_test_2channels4bytes_6,0,1,tests/end2end_tests.c:268: Output did not match the contents of the reference file
+hw1_tests_suite/crypt_test_2channels3bytes_5,0,1,tests/end2end_tests.c:254: Output did not match the contents of the reference file
+hw1_tests_suite/crypt_test_2channels2bytes_3,0,1,tests/end2end_tests.c:226: Output did not match the contents of the reference file
+hw1_tests_suite/crypt_test_2channels2bytes_2,0,1,tests/end2end_tests.c:213: Output did not match the contents of the reference file
+hw1_tests_suite/crypt_test_2channels2bytes_1,0,1,tests/end2end_tests.c:200: Output did not match the contents of the reference file
+hw1_tests_suite/crypt_test9,0,1,tests/end2end2_tests.c:181: Output did not match the contents of the reference file
+hw1_tests_suite/crypt_test6,0,1,tests/end2end2_tests.c:154: Output did not match the contents of the reference file
+hw1_tests_suite/crypt_test7,0,1,tests/end2end2_tests.c:167: Output did not match the contents of the reference file
+hw1_tests_suite/crypt_test5,0,1,tests/end2end2_tests.c:141: Output did not match the contents of the reference file
+total,26,67,
