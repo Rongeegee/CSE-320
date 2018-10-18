@@ -10,17 +10,23 @@
 #include "sfmm.h"
 #include <errno.h>
 
+
+sf_prologue prologue;
+sf_epilogue epilogue;
+
 void *sf_malloc(size_t size) {
     if(size == 0)
         return NULL;
 
     if(sf_mem_start() == sf_mem_end()){
         void* ptrNewPage = sf_mem_grow();
-        sf_prologue prologue;
-        prologue.header = *((sf_header*)(ptrNewPage + 8));
-        prologue.footer = *((sf_footer*)(ptrNewPage + 24));
-        sf_epilogue epilogue;
-        epilogue.footer = *((sf_footer*)(ptrNewPage - 7));
+        memset(ptrNewPage,0,48);
+        memset((sf_mem_end()  - 8),0,8);
+        prologue = *((sf_prologue*)(ptrNewPage));
+        epilogue.footer = *((sf_footer*)(sf_mem_end()  - 8));
+        prologue.header.info.allocated = 1;
+        prologue.footer.info.allocated = 1;
+        epilogue.footer.info.allocated = 1;
     }
 
     else{
@@ -35,13 +41,11 @@ void *sf_malloc(size_t size) {
         //now search the free list to obtain the first block on the first free list.
         //node is the sentinel of the free list.
         sf_free_list_node *node = &sf_free_list_head;
-        node = (*node).next; //now, it is the first node of the list
+        node = (*node).next;        //now, it is the first node of the list
     }
     return NULL;
 
 }
-
-
 
 
 
