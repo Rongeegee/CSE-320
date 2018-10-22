@@ -10,6 +10,7 @@
 #include "sfmm.h"
 #include <errno.h>
 
+sf_free_list_node * getBlockOfFitSize(sf_free_list_node * head, sf_header header);
 
 sf_prologue* prologue;
 sf_epilogue* epilogue;
@@ -30,7 +31,7 @@ void *sf_malloc(size_t size) {
         (*epilogue).footer.info.allocated = 1;
 
         size_t block_size = size;
-        size = size + 8;
+        block_size = block_size + 8;
         if(block_size % 16 != 0){
             block_size += (16 - (block_size % 16));
         }
@@ -38,7 +39,7 @@ void *sf_malloc(size_t size) {
             block_size += 16;
 
         //gotta check if there is enough bytes to allocate
-        size_t remaining_byte = 4096 - 64;
+        size_t remaining_byte = 4096 - 48;
         while (remaining_byte <= block_size){
             sf_mem_grow();
             memset(epilogue,0,8);
@@ -48,7 +49,7 @@ void *sf_malloc(size_t size) {
             remaining_byte += 4096;
         }
 
-        //prev_allocated bit hasn't been figured out yet.
+        //the allocated bit of the first allocate block is always 1.
         sf_header block_header;
         block_header.info.requested_size = size;
         block_header.info.block_size = (block_size >> 4);
@@ -56,14 +57,38 @@ void *sf_malloc(size_t size) {
         block_header.info.allocated = 1;
         memcpy(ptrBeginning + 40, &block_header,8);
 
+        //make a free block header and footer
+        //but, what if the function takes up exactly all the memory in the heap, not more and not less?
+        remaining_byte -= block_size;
+        if(remaining_byte < 32){
+            sf_mem_grow();
+            memset(epilogue,0,8);
+            epilogue = (sf_epilogue*)(sf_mem_end()  - 8);
+            memset(epilogue,0,8);
+            (*epilogue).footer.info.allocated = 1;
+            remaining_byte += 4096;
+        }
+        void* ptrFreeBlock = ptrBeginning + 40 + block_size;
+        sf_header free_block_header;
+        free_block_header.info.block_size = (remaining_byte >> 4);
+        free_block_header.info.prev_allocated = 1;
+        free_block_header.info.allocated = 0;
+        memcpy(ptrFreeBlock, &free_block_header,8);
 
+        sf_footer free_block_footer;
+        free_block_footer.info.requested_size = 0;
+        free_block_footer.info.block_size = (remaining_byte >> 4);
+        free_block_footer.info.allocated = 0;
+        memcpy(ptrFreeBlock + remaining_byte -8, &free_block_footer,8);
 
-        sf_footer block_footer;
-        block_footer.info.requested_size = size;
-        block_footer.info.block_size = (block_size >> 4);
-        block_footer.info.allocated = 1;
-        memcpy(ptrBeginning + 48 + block_size,&block_footer,8);
+        sf_free_list_node* freeBlockNode = sf_add_free_list(remaining_byte,&sf_free_list_head);
+        free_block_header.links.next = &(sf_free_list_head.head);
+        free_block_header.links.prev = &(sf_free_list_head.head);
+        sf_free_list_head.prev = freeBlockNode;
+        sf_free_list_head.next = freeBlockNode;
+        sf_show_free_lists();
 
+        return (ptrBeginning + 48);
     }
 
     else{
@@ -74,21 +99,6 @@ void *sf_malloc(size_t size) {
         }
         if(header.info.block_size < 32)
             header.info.block_size += 16;
-
-        //now search the free list to obtain the first block on the first free list.
-        //head is the sentinel of the free list.
-        // sf_free_list_node *head = &sf_free_list_head;
-        // while (getBlockOfFitSize(head,header) == NULL){
-        //     void* ptrBeginning = sf_mem_grow();
-        //     if(sf_mem_grow() == NULL){
-        //         sf_errno = ENOMEM;
-        //         return NULL;
-        //     }
-        //     else{
-
-        //     }
-
-        // }
     }
     return NULL;
 }
@@ -108,7 +118,6 @@ sf_free_list_node * getBlockOfFitSize(sf_free_list_node * head, sf_header header
             }
         return NULL;
 }
-
 
 
 
