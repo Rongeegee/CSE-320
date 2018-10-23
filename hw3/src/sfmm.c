@@ -80,13 +80,16 @@ void *sf_malloc(size_t size) {
         free_block_footer.info.requested_size = 0;
         free_block_footer.info.block_size = (remaining_byte >> 4);
         free_block_footer.info.allocated = 0;
-        memcpy(ptrFreeBlock + remaining_byte -8, &free_block_footer,8);
+        free_block_footer.info.prev_allocated = 1;
+        memcpy(ptrFreeBlock + remaining_byte - 8, &free_block_footer,8);
 
         sf_free_list_node* freeBlockNode = sf_add_free_list(remaining_byte,&sf_free_list_head);
         freeBlockNode->head.links.next = (sf_header*) ptrFreeBlock;
         freeBlockNode->head.links.prev = (sf_header*) ptrFreeBlock;
         ((sf_header*) ptrFreeBlock)->links.next = &(freeBlockNode->head);
         ((sf_header*) ptrFreeBlock)->links.prev = &(freeBlockNode->head);
+
+        sf_show_heap();
 
         return (ptrBeginning + 48);
     }
@@ -99,9 +102,12 @@ void *sf_malloc(size_t size) {
         }
         if(block_size < 32)
             block_size += 16;
+        if(get_sf_free_list_node(size) == NULL){
 
+        }
+        else{
 
-
+        }
     }
     return NULL;
 }
