@@ -10,8 +10,8 @@
 #include "sfmm.h"
 #include <errno.h>
 
-sf_free_list_node * getBlockOfFitSize(sf_free_list_node * head, sf_header header);
-sf_free_list_node * get_sf_free_list_node(size_t size);
+sf_free_list_node* get_sf_free_list_node(size_t size);
+sf_free_list_node* set_sf_free_list_node(size_t size);
 
 sf_prologue* prologue;
 sf_epilogue* epilogue;
@@ -89,8 +89,6 @@ void *sf_malloc(size_t size) {
         ((sf_header*) ptrFreeBlock)->links.next = &(freeBlockNode->head);
         ((sf_header*) ptrFreeBlock)->links.prev = &(freeBlockNode->head);
 
-        sf_show_heap();
-
         return (ptrBeginning + 48);
     }
 
@@ -103,7 +101,8 @@ void *sf_malloc(size_t size) {
         if(block_size < 32)
             block_size += 16;
         if(get_sf_free_list_node(size) == NULL){
-
+            void* ptrNewPage = sf_mem_grow();
+            sf_free_list_node* ptrNewFreelistNode = set_sf_free_list_node(size);
         }
         else{
 
@@ -112,16 +111,33 @@ void *sf_malloc(size_t size) {
     return NULL;
 }
 
-
+/* This function add a node that contains the size specified to sf_free_list in the corrsponding spot based on its size, and return the Node being added
+** The list needs to be in increasing order.
+** @size size that the node to be added contains
+*/
+sf_free_list_node* set_sf_free_list_node(size_t size){
+    if(sf_free_list_head.next == &sf_free_list_head){
+        return sf_add_free_list(size,&sf_free_list_head);
+    }
+    sf_free_list_node* current_node = sf_free_list_head.next;
+    while (current_node -> size < size){
+        if(current_node == &sf_free_list_head){
+            return sf_add_free_list(size,&sf_free_list_head);
+        }
+        current_node = current_node->next;
+    }
+    return sf_add_free_list(size,current_node);
+}
 
 /* This function returns an address to the sf_free_list_node which contains the size.
 **@size size that the sf_free_list_node contains.
 **@return the address to the sf_free_list_node that contains the size.
+   return NULL if no such node exists.
 */
 sf_free_list_node * get_sf_free_list_node(size_t size){
     sf_free_list_node* current_node = sf_free_list_head.next;
     while (current_node != &sf_free_list_head){
-        if(((current_node-> size) << 4) >= size){
+        if(((current_node-> size) << 4) <= size){
             return current_node;
         }
         current_node = (*current_node).next;
