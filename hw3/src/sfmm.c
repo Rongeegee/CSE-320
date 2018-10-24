@@ -154,7 +154,10 @@ void removeFromFreelist(sf_header* header){
     sf_header* prev_free_header = header->links.prev;
     sf_header* next_free_header = header->links.next;
     prev_free_header->links.next = next_free_header;
-    next_free_header->links.prev = next_free_header;
+    next_free_header->links.prev = prev_free_header;
+    header->links.prev = NULL;
+    header->links.next = NULL;
+
 }
 
 /*
@@ -191,13 +194,67 @@ sf_header* coallesce(sf_header* freeBlockHeader){
             }
         }
         else{
-            sf_footer* freeBlockFooter = (sf_footer*)freeBlockHeader + currBlkSize - 8;
+            sf_footer* freeBlockFooter = (sf_footer*)(freeBlockHeader + freeBlockHeader->info.block_size - 8);
+            sf_header* nextBlockHeader = freeBlockHeader + freeBlockHeader->info.block_size;
+            unsigned prevBlkAllocated = freeBlockHeader->info.prev_allocated;
+            unsigned nextBlkAllocated = nextBlockHeader->info.allocated;
+
+            if(prevBlkAllocated == 0 && nextBlkAllocated == 0){
+                //first, I need to get the size of this free block, the size of previous free block, and the size of the next free block
+                //and also the header and footer of each of them
+                sf_footer* prevBlkFooter = (sf_footer*)(freeBlockHeader - 8);
+                sf_header* prevBlkHeader = (sf_header*)(prevBlkFooter - prevBlkFooter->info.block_size + 8);
+                sf_footer* nextBlkFooter = (sf_footer*)(nextBlockHeader + nextBlockHeader->info.block_size - 8);
+                size_t totalSize = prevBlkHeader->info.block_size + freeBlockHeader->info.block_size + prevBlkHeader->info.block_size;
+                removeFromFreelist(prevBlkHeader);
+                removeFromFreelist(freeBlockHeader);
+                removeFromFreelist(nextBlockHeader);
+                memset(prevBlkFooter,0,8);
+                memset(freeBlockHeader,0,8);
+                memset(freeBlockFooter,0,8);
+                memset(nextBlockHeader,0,8);
+                prevBlkHeader->info.block_size = totalSize;
+                nextBlkFooter->info.block_size = totalSize;
+                nextBlkFooter->info.prev_allocated = prevBlkHeader->info.prev_allocated;
+                addFreeHeader(prevBlkHeader);
+                return prevBlkHeader;
+            }
+            else if(prevBlkAllocated == 1 && nextBlkAllocated == 0){
+                sf_footer* nextBlkFooter = (sf_footer*)(nextBlockHeader + nextBlockHeader->info.block_size - 8);
+                size_t totalSize = freeBlockHeader->info.block_size + nextBlockHeader->info.block_size;
+                removeFromFreelist(freeBlockHeader);
+                removeFromFreelist(nextBlockHeader);
+                memset(freeBlockFooter,0,8);
+                memset(nextBlockHeader,0,8);
+                freeBlockHeader->info.block_size = totalSize;
+                nextBlkFooter-> info.block_size = totalSize;
+                nextBlkFooter->info.prev_allocated = freeBlockHeader->info.prev_allocated;
+                addFreeHeader(freeBlockHeader);
+                return freeBlockHeader;
+            }
+            else if(prevBlkAllocated == 0 && nextBlkAllocated == 1){
+                sf_footer* prevBlkFooter = (sf_footer*) (freeBlockHeader - 8);
+                sf_header* prevBlkHeader = (sf_header*)(prevBlkFooter - prevBlkFooter->info.block_size + 8);
+                size_t totalSize = prevBlkHeader->info.block_size + freeBlockHeader->info.block_size;
+                removeFromFreelist(freeBlockHeader);
+                removeFromFreelist(prevBlkHeader);
+                memset(prevBlkFooter,0,8);
+                memset(freeBlockFooter,0,8);
+                prevBlkHeader->info.block_size = totalSize;
+                freeBlockFooter->info.block_size = totalSize;
+                freeBlockFooter->info.prev_allocated = prevBlkHeader->info.prev_allocated;
+                addFreeHeader(prevBlkHeader);
+                return prevBlkHeader;
+            }
+            else{
+                return NULL;
+            }
 
         }
     }
 
 
-/** This function add header of a free list to list of free lists
+/** This function add header of a free block to list of free lists
 **
 **/
 void addFreeHeader(sf_header* header){
