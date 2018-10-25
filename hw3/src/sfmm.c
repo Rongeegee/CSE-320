@@ -72,7 +72,7 @@ void *sf_malloc(size_t size) {
             epilogue = (sf_epilogue*)(sf_mem_end()  - 8);
             memset(epilogue,0,8);
             (*epilogue).footer.info.allocated = 1;
-            remaining_byte += 4096;
+
         }
         void* ptrFreeBlock = ptrBeginning + 40 + block_size;
         sf_header free_block_header;
@@ -181,19 +181,149 @@ void *sf_malloc(size_t size) {
 
             }
             else{
-                // sf_mem_grow();
-                // sf_free_list_node* ptrNewFreelistNode = set_sf_free_list_node(size);
                 //if the last memory block is allocated
+                void* ptrNewPage = sf_mem_grow();
+                size_t numOfBytesHad = 4096;
+                sf_header* newBlkHeader =  (sf_header*) (ptrNewPage - 8);
+                memset(epilogue,0,8);
+                epilogue = (sf_epilogue*)(sf_mem_end()  - 8);
+                while(numOfBytesHad < block_size){
+                    sf_mem_grow();
+                    numOfBytesHad += 4096;
+                    memset(epilogue,0,8);
+                    epilogue = (sf_epilogue*)(sf_mem_end()  - 8);
+                }
+                if(numOfBytesHad == block_size){
+                    newBlkHeader->info.requested_size = size;
+                    newBlkHeader->info.block_size = block_size >> 4;
+                    newBlkHeader->info.prev_allocated = 1;
+                    newBlkHeader->info.two_zeroes = 0;
+                    newBlkHeader->info.allocated = 1;
+                    return newBlkHeader;
+                }
+                else{
+                    newBlkHeader->info.requested_size = size;
+                    newBlkHeader->info.block_size = block_size >> 4;
+                    newBlkHeader->info.prev_allocated = 1;
+                    newBlkHeader->info.two_zeroes = 0;
+                    newBlkHeader->info.allocated = 1;
 
+                    sf_header* freeBlkHeader = newBlkHeader + block_size;
+                    size_t remaining_byte = numOfBytesHad - block_size;
+                    freeBlkHeader->info.block_size = remaining_byte >> 4;
+                    freeBlkHeader->info.prev_allocated = 1;
+                    freeBlkHeader->info.two_zeroes = 0;
+                    freeBlkHeader->info.allocated = 0;
+                    lastFreeHeader = freeBlkHeader;
+                    sf_footer* freeBlockFooter = (sf_footer*)(freeBlkHeader + remaining_byte - 8);
+                    freeBlockFooter->info.block_size = remaining_byte >> 4;
+                    freeBlockFooter->info.prev_allocated = 1;
+                    freeBlockFooter->info.two_zeroes = 0;
+                    freeBlockFooter->info.allocated = 0;
+                    lastFreeFooter = freeBlockFooter;
+                    addFreeHeader(freeBlkHeader);
+                    return newBlkHeader;
+                }
             }
 
+        }
+      //if there exists a free block that's large enough
+        sf_free_list_node* freeListNode = get_sf_free_list_node(size);
+        if(freeListNode != NULL && freeListNode->head.links.next != &freeListNode->head){
+            if(freeListNode->size == size){
+                //if the free list is not empty, get the header of the first free block
+                sf_header* freeHeader = freeListNode->head.links.next;
+                sf_footer* freeFooter = (sf_footer*)(freeHeader + (freeHeader->info.block_size << 4) - 8);
+                removeFromFreelist(freeHeader);
+                freeHeader->info.requested_size = size;
+                freeHeader->info.block_size = block_size >> 4;
+                freeHeader->info.allocated = 1;
+                memset(freeFooter,0,8);
+                if(freeHeader->info.prev_allocated == 0){
+                    sf_footer* prev_footer =  (sf_footer*)(freeHeader - 8);
+                    lastFreeFooter = prev_footer;
+                    sf_header* prev_header = (sf_header*) (prev_footer - (prev_footer->info.block_size << 4) + 8);
+                    lastFreeHeader = prev_header;
+                }
+                else{
+                    sf_header* poFreeHeader = lastFreeHeader - 32;
+                    sf_header* lastestFreeHeader = NULL;
+                    while(poFreeHeader != (sf_header*)(&prologue->footer)){
+                        lastestFreeHeader = isFreeHeader(poFreeHeader);
+                        if(lastestFreeHeader != NULL){
+                            break;
+                        }
+                        poFreeHeader = poFreeHeader - 8;
+                    }
+                    if(lastestFreeHeader == NULL){
+                        lastFreeHeader = NULL;
+                        lastFreeFooter = NULL;
+                    }
+                    else{
+                        lastFreeHeader = lastestFreeHeader;
+                        lastFreeFooter = (sf_footer*)(lastFreeHeader + (lastFreeHeader->info.block_size << 4) - 8);
+                    }
+                }
+                return (freeHeader + 8);
+            }
+            else{
+                sf_header* freeHeader = freeListNode->head.links.next;
+                sf_footer* freeFooter = (sf_footer*)(freeHeader + (freeHeader->info.block_size << 4) - 8);
+                removeFromFreelist(freeHeader);
+                freeHeader->info.requested_size = size;
+                freeHeader->info.block_size = block_size >> 4;
+                freeHeader->info.allocated = 1;
+
+
+                size_t newFreeBlkSize = (freeFooter->info.block_size << 4) - block_size;
+                if(newFreeBlkSize < 32){
+                    if(freeHeader->info.prev_allocated == 0){
+                    sf_footer* prev_footer =  (sf_footer*)(freeHeader - 8);
+                    lastFreeFooter = prev_footer;
+                    sf_header* prev_header = (sf_header*) (prev_footer - (prev_footer->info.block_size << 4) + 8);
+                    lastFreeHeader = prev_header;
+                     }
+                      else{
+                        sf_header* poFreeHeader = lastFreeHeader - 32;
+                        sf_header* lastestFreeHeader = NULL;
+                        while(poFreeHeader != (sf_header*)(&prologue->footer)){
+                            lastestFreeHeader = isFreeHeader(poFreeHeader);
+                            if(lastestFreeHeader != NULL){
+                                break;
+                            }
+                            poFreeHeader = poFreeHeader - 8;
+                        }
+                        if(lastestFreeHeader == NULL){
+                            lastFreeHeader = NULL;
+                            lastFreeFooter = NULL;
+                        }
+                        else{
+                            lastFreeHeader = lastestFreeHeader;
+                            lastFreeFooter = (sf_footer*)(lastFreeHeader + (lastFreeHeader->info.block_size << 4) - 8);
+                        }
+                    }
+                        memset(freeFooter,0,8);
+                        return (freeHeader + 8);
+                    }
+
+                sf_header* newFreeHeader = freeHeader + (freeHeader->info.block_size << 4);
+
+                newFreeHeader->info.block_size = newFreeBlkSize >> 4;
+                newFreeHeader->info.two_zeroes = 0;
+                newFreeHeader->info.prev_allocated = 1;
+                newFreeHeader->info.allocated = 0;
+
+                freeFooter->info.block_size = newFreeBlkSize >> 4;
+                freeFooter->info.prev_allocated = 1;
+                addFreeHeader(freeHeader);
+                if(freeFooter == lastFreeFooter){
+                    lastFreeHeader = newFreeHeader;
+                }
+                return (freeHeader + 8);
+            }
 
         }
-        else{
-
-        }
-    }
-    return NULL;
+    }//this ending bracket belongss to the outermost else statement
 }
 
 
