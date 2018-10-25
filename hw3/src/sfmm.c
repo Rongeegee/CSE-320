@@ -14,6 +14,7 @@ sf_free_list_node* get_sf_free_list_node(size_t size);
 sf_free_list_node* set_sf_free_list_node(size_t size);
 void removeFromFreelist(sf_header* header);
 void addFreeHeader(sf_header* header);
+sf_header* isFreeHeader(sf_header* ending_header);
 
 sf_prologue* prologue;
 sf_epilogue* epilogue;
@@ -107,7 +108,7 @@ void *sf_malloc(size_t size) {
         if(block_size < 32)
             block_size += 16;
         if(get_sf_free_list_node(size) == NULL){ //if I cannot find a free block of memory that's large enough
-            if (((sf_footer*)(sf_mem_end()-16)) == lastFreeFooter){//if this is the last free block of memory in heap that precedes the epilogue
+            if (((sf_footer*)(sf_mem_end()-16)) == lastFreeFooter){ //if this is the last free block of memory in heap that precedes the epilogue
                 size_t numOfBytesHad = lastFreeFooter->info.block_size << 4;
                 while(numOfBytesHad < block_size){
                     sf_mem_grow();
@@ -117,24 +118,73 @@ void *sf_malloc(size_t size) {
                     numOfBytesHad += 4096;
                 }
                 //now numOfBytesHad will be the size of the new coallesce free block.
-                memset(lastFreeHeader + (lastFreeHeader->info.block_size) -8, 0, 8); //But, is it (calling memset) really necessary?
+                memset(lastFreeHeader + (lastFreeHeader->info.block_size << 4) -8, 0, 8); //But, is it (calling memset) really necessary?
                 memcpy(sf_mem_end() - 8,epilogue,8);
-                lastFreeHeader->info.block_size = numOfBytesHad;
+                lastFreeHeader->info.block_size = numOfBytesHad >>4;
                 lastFreeFooter = (sf_footer*)(sf_mem_end() - 16);
-                lastFreeFooter-> info.block_size = numOfBytesHad;
+                lastFreeFooter-> info.block_size = numOfBytesHad >> 4;
                 lastFreeFooter-> info.prev_allocated = lastFreeHeader->info.prev_allocated;
                 lastFreeFooter-> info.allocated = 0;
 
+                removeFromFreelist(lastFreeHeader);
                 if(block_size == numOfBytesHad){
-                    // sf_header block_header = {size, block_size, 0,lastFreeHeader->info.prev_allocated,1};
+                    sf_header block_header;
+                    block_header.info.requested_size = size;
+                    block_header.info.block_size = numOfBytesHad >> 4;
+                    block_header.info.two_zeroes = 0;
+                    block_header.info.prev_allocated = lastFreeHeader->info.prev_allocated;
+                    block_header.info.allocated = 1;
+                    if(lastFreeHeader->info.prev_allocated == 0){
+                        size_t prev_block_size = ((lastFreeHeader - 8)->info.block_size) << 4;
+                        memcpy(lastFreeHeader,&block_header,8);
+                        lastFreeFooter = (sf_footer*) (lastFreeHeader - 8);
+                        lastFreeHeader = (sf_header*) (lastFreeFooter- prev_block_size + 8);
+                        //function return void*, but not sure if I can return sf_footer*
+                        return (lastFreeFooter + 16);
+                    }
 
-
+                    sf_header* poFreeHeader = lastFreeHeader - 32;
+                    sf_header* lastestFreeHeader = NULL;
+                    while(poFreeHeader != (sf_header*)(&prologue->footer)){
+                        lastestFreeHeader = isFreeHeader(poFreeHeader);
+                        if(lastestFreeHeader != NULL){
+                            break;
+                        }
+                        poFreeHeader = poFreeHeader - 8;
+                    }
+                    if(lastestFreeHeader == NULL){
+                        lastFreeHeader = NULL;
+                        lastFreeFooter = NULL;
+                    }
+                    else{
+                        lastFreeHeader = lastestFreeHeader;
+                        lastFreeFooter = (sf_footer*)(lastFreeHeader + (lastFreeHeader->info.block_size << 4) - 8);
+                    }
+                }
+                else{
+                    lastFreeHeader->info.requested_size = size;
+                    lastFreeHeader->info.block_size = block_size >> 4;
+                    lastFreeHeader->info.allocated = 1;
+                    lastFreeHeader = lastFreeHeader + (lastFreeHeader->info.block_size << 4);
+                    lastFreeFooter = (sf_footer*)(lastFreeHeader+ (lastFreeHeader->info.block_size << 4) - 8);
+                    lastFreeHeader->info.block_size = (numOfBytesHad - block_size) >> 4;
+                    lastFreeHeader->info.prev_allocated = 1;
+                    lastFreeHeader->info.two_zeroes = 0;
+                    lastFreeHeader->info.allocated = 0;
+                    lastFreeFooter->info.block_size = (numOfBytesHad - block_size) >> 4;
+                    lastFreeFooter->info.prev_allocated = 1;
+                    lastFreeFooter->info.two_zeroes = 0;
+                    lastFreeFooter->info.allocated = 0;
+                    addFreeHeader(lastFreeHeader);
+                    return (lastFreeHeader + 8);
                 }
 
             }
             else{
                 // sf_mem_grow();
                 // sf_free_list_node* ptrNewFreelistNode = set_sf_free_list_node(size);
+                //if the last memory block is allocated
+
             }
 
 
@@ -146,6 +196,26 @@ void *sf_malloc(size_t size) {
     return NULL;
 }
 
+
+/**
+** This function checks if ending_header is a free header. It returns the free header if it is. NULL if it's not.
+**
+**/
+
+sf_header* isFreeHeader(sf_header* ending_header){
+    sf_free_list_node* current_node = sf_free_list_head.next;
+    while(current_node != &sf_free_list_head){
+        sf_header* current_header = current_node->head.links.next;
+        while (current_header != &current_node->head){
+            if(ending_header == current_header){
+                return current_header;
+            }
+            current_header = current_node->head.links.next;
+        }
+        current_node = sf_free_list_head.next;
+    }
+    return NULL;
+}
 
 /*
 ** This function removes a sf_header from the circular doubly linked list
