@@ -107,7 +107,8 @@ void *sf_malloc(size_t size) {
         }
         if(block_size < 32)
             block_size += 16;
-        if(get_sf_free_list_node(size) == NULL){ //if I cannot find a free block of memory that's large enough
+        sf_free_list_node* freeNode = get_sf_free_list_node(size);
+        if(freeNode == NULL ||freeNode->head.links.next == &freeNode->head){ //if I cannot find a free block of memory that's large enough
             if (((sf_footer*)(sf_mem_end()-16)) == lastFreeFooter){ //if this is the last free block of memory in heap that precedes the epilogue
                 size_t numOfBytesHad = lastFreeFooter->info.block_size << 4;
                 while(numOfBytesHad < block_size){
@@ -229,7 +230,6 @@ void *sf_malloc(size_t size) {
         }
       //if there exists a free block that's large enough
         sf_free_list_node* freeListNode = get_sf_free_list_node(size);
-        if(freeListNode != NULL && freeListNode->head.links.next != &freeListNode->head){
             if(freeListNode->size == size){
                 //if the free list is not empty, get the header of the first free block
                 sf_header* freeHeader = freeListNode->head.links.next;
@@ -322,7 +322,6 @@ void *sf_malloc(size_t size) {
                 return (freeHeader + 8);
             }
 
-        }
     }//this ending bracket belongss to the outermost else statement
 }
 
