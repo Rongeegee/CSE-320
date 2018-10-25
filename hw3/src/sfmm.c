@@ -67,11 +67,11 @@ void *sf_malloc(size_t size) {
         //but, what if the function takes up exactly all the memory in the heap, not more and not less?
         remaining_byte -= block_size;
         if(remaining_byte < 32){
-            sf_mem_grow();
-            memset(epilogue,0,8);
-            epilogue = (sf_epilogue*)(sf_mem_end()  - 8);
-            memset(epilogue,0,8);
-            (*epilogue).footer.info.allocated = 1;
+            block_size = block_size + remaining_byte;
+            block_header.info.block_size = (block_size >> 4);
+            lastFreeHeader = NULL;
+            lastFreeHeader = NULL;
+            return (ptrBeginning + 48);
 
         }
         void* ptrFreeBlock = ptrBeginning + 40 + block_size;
@@ -95,7 +95,8 @@ void *sf_malloc(size_t size) {
         freeBlockNode->head.links.prev = (sf_header*) ptrFreeBlock;
         ((sf_header*) ptrFreeBlock)->links.next = &(freeBlockNode->head);
         ((sf_header*) ptrFreeBlock)->links.prev = &(freeBlockNode->head);
-        sf_show_heap();
+
+
         return (ptrBeginning + 48);
     }
 
@@ -166,8 +167,9 @@ void *sf_malloc(size_t size) {
                     lastFreeHeader->info.requested_size = size;
                     lastFreeHeader->info.block_size = block_size >> 4;
                     lastFreeHeader->info.allocated = 1;
+                    sf_header* newAllocHd = lastFreeHeader;
                     lastFreeHeader = lastFreeHeader + (lastFreeHeader->info.block_size << 4);
-                    lastFreeFooter = (sf_footer*)(lastFreeHeader+ (lastFreeHeader->info.block_size << 4) - 8);
+                    lastFreeFooter = (sf_footer*)(newAllocHd+ (newAllocHd->info.block_size << 4) - 8);
                     lastFreeHeader->info.block_size = (numOfBytesHad - block_size) >> 4;
                     lastFreeHeader->info.prev_allocated = 1;
                     lastFreeHeader->info.two_zeroes = 0;
@@ -177,7 +179,7 @@ void *sf_malloc(size_t size) {
                     lastFreeFooter->info.two_zeroes = 0;
                     lastFreeFooter->info.allocated = 0;
                     addFreeHeader(lastFreeHeader);
-                    return (lastFreeHeader + 8);
+                    return (newAllocHd + 8);
                 }
 
             }
@@ -231,6 +233,7 @@ void *sf_malloc(size_t size) {
       //if there exists a free block that's large enough
         sf_free_list_node* freeListNode = get_sf_free_list_node(size);
             if(freeListNode->size == size){
+                fprintf(stderr, "%s\n", "Kylie Jenner is also ugly.");
                 //if the free list is not empty, get the header of the first free block
                 sf_header* freeHeader = freeListNode->head.links.next;
                 sf_footer* freeFooter = (sf_footer*)(freeHeader + (freeHeader->info.block_size << 4) - 8);
@@ -267,6 +270,7 @@ void *sf_malloc(size_t size) {
                 return (freeHeader + 8);
             }
             else{
+                fprintf(stderr, "%s\n", "Brad Pit is sexy.");
                 sf_header* freeHeader = freeListNode->head.links.next;
                 sf_footer* freeFooter = (sf_footer*)(freeHeader + (freeHeader->info.block_size << 4) - 8);
                 removeFromFreelist(freeHeader);
