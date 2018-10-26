@@ -4,15 +4,15 @@
 int main(int argc, char const *argv[]) {
     sf_mem_init();
 
-    double* ptr = sf_malloc(4016);
+    double* ptr = sf_malloc(3098);
 
     *ptr = 320320320e-320;
 
-    sf_show_heap();
     printf("%e\n", *ptr);
 
     sf_free(ptr);
 
+    sf_show_heap();
     sf_mem_fini();
 
     return EXIT_SUCCESS;
