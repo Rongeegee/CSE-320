@@ -231,9 +231,8 @@ void *sf_malloc(size_t size) {
 
         }
       //if there exists a free block that's large enough
-        sf_free_list_node* freeListNode = get_sf_free_list_node(size);
+            sf_free_list_node* freeListNode = get_sf_free_list_node(size);
             if(freeListNode->size == size){
-                fprintf(stderr, "%s\n", "Kylie Jenner is also ugly.");
                 //if the free list is not empty, get the header of the first free block
                 sf_header* freeHeader = freeListNode->head.links.next;
                 sf_footer* freeFooter = (sf_footer*)(freeHeader + (freeHeader->info.block_size << 4) - 8);
@@ -270,7 +269,6 @@ void *sf_malloc(size_t size) {
                 return (freeHeader + 8);
             }
             else{
-                fprintf(stderr, "%s\n", "Brad Pit is sexy.");
                 sf_header* freeHeader = freeListNode->head.links.next;
                 sf_footer* freeFooter = (sf_footer*)(freeHeader + (freeHeader->info.block_size << 4) - 8);
                 removeFromFreelist(freeHeader);
@@ -381,12 +379,12 @@ sf_header* coallesce(sf_header* freeBlockHeader){
                 return NULL;
             }
             else{
-                sf_footer* prevBlKfterPtr = (sf_footer*) freeBlockHeader - 8;
+                sf_footer* prevBlKfterPtr = (sf_footer*) (freeBlockHeader - 8);
                 size_t prevBlkSize = (prevBlKfterPtr->info.block_size) << 4;
                 size_t currBlkSize = (freeBlockHeader->info.block_size) << 4;
                 sf_header* prevBlkHdPtr = (sf_header*)(prevBlKfterPtr - prevBlkSize + 8);
-                sf_footer* freeBlockFooter = (sf_footer*)freeBlockHeader + currBlkSize - 8;
-                size_t combined_blkSize = currBlkSize+ prevBlkSize;
+                sf_footer* freeBlockFooter = (sf_footer*)(freeBlockHeader + currBlkSize - 8);
+                size_t combined_blkSize = currBlkSize + prevBlkSize;
                 prevBlkHdPtr->info.block_size = combined_blkSize >> 4;
                 freeBlockFooter->info.block_size = combined_blkSize >> 4;
                 removeFromFreelist(prevBlkHdPtr);
@@ -409,7 +407,7 @@ sf_header* coallesce(sf_header* freeBlockHeader){
                 sf_footer* prevBlkFooter = (sf_footer*)(freeBlockHeader - 8);
                 sf_header* prevBlkHeader = (sf_header*)(prevBlkFooter - (prevBlkFooter->info.block_size << 4) + 8);
                 sf_footer* nextBlkFooter = (sf_footer*)(nextBlockHeader + (nextBlockHeader->info.block_size << 4) - 8);
-                size_t totalSize = (prevBlkHeader->info.block_size << 4) + (freeBlockHeader->info.block_size << 4) + (prevBlkHeader->info.block_size << 4);
+                size_t totalSize = (prevBlkHeader->info.block_size << 4) + (freeBlockHeader->info.block_size << 4) + (nextBlockHeader->info.block_size << 4);
                 removeFromFreelist(prevBlkHeader);
                 removeFromFreelist(freeBlockHeader);
                 removeFromFreelist(nextBlockHeader);
@@ -436,7 +434,7 @@ sf_header* coallesce(sf_header* freeBlockHeader){
                 addFreeHeader(freeBlockHeader);
                 return freeBlockHeader;
             }
-            else if(prevBlkAllocated == 0 && nextBlkAllocated == 1){
+            else{ //(prevBlkAllocated == 0 && nextBlkAllocated == 1){
                 sf_footer* prevBlkFooter = (sf_footer*) (freeBlockHeader - 8);
                 sf_header* prevBlkHeader = (sf_header*)(prevBlkFooter - (prevBlkFooter->info.block_size << 4) + 8);
                 size_t totalSize = (prevBlkHeader->info.block_size << 4)+ (freeBlockHeader->info.block_size << 4);
@@ -449,9 +447,6 @@ sf_header* coallesce(sf_header* freeBlockHeader){
                 freeBlockFooter->info.prev_allocated = prevBlkHeader->info.prev_allocated;
                 addFreeHeader(prevBlkHeader);
                 return prevBlkHeader;
-            }
-            else{
-                return NULL;
             }
 
         }
@@ -515,7 +510,17 @@ sf_free_list_node * get_sf_free_list_node(size_t size){
 }
 
 void sf_free(void *pp) {
-    return;
+    sf_header* allocBlkHeader = (sf_header*)pp;
+    size_t block_size = allocBlkHeader->info.block_size << 4;
+    allocBlkHeader->info.allocated = 0;
+    allocBlkHeader->info.requested_size = 0;
+    sf_footer* allocBlkFooter = (sf_footer*)(allocBlkHeader + block_size - 8);
+    allocBlkFooter->info.requested_size = 0;
+    allocBlkFooter->info.block_size = block_size >> 4;
+    allocBlkFooter->info.prev_allocated = allocBlkHeader->info.prev_allocated;
+    allocBlkFooter->info.allocated = 0;
+    addFreeHeader(allocBlkHeader);
+    coallesce(allocBlkHeader);
 }
 
 void *sf_realloc(void *pp, size_t rsize) {
