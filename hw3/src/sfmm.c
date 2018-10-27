@@ -25,6 +25,10 @@ void *sf_malloc(size_t size) {
 
     if(sf_mem_start() == sf_mem_end()){
         void* ptrBeginning = sf_mem_grow();
+        if(ptrBeginning == NULL){
+            sf_errno = ENOMEM;
+            return NULL;
+        }
         memset(ptrBeginning,0,48);
         memset((sf_mem_end()  - 16),0,16);
 
@@ -46,7 +50,10 @@ void *sf_malloc(size_t size) {
         size_t remaining_byte = 4096 - 48;
 
         while (remaining_byte < block_size){
-            sf_mem_grow();
+            if(sf_mem_grow() == NULL){
+                sf_errno = ENOMEM;
+                return NULL;
+            }
             memset(epilogue,0,8);
             epilogue = (sf_epilogue*)(sf_mem_end()  - 8);
             memset(epilogue,0,8);
@@ -155,6 +162,10 @@ void *sf_malloc(size_t size) {
             void* newPagePtr;
             while(freeNode == NULL ||freeNode->head.links.next != &freeNode->head){
                 newPagePtr = sf_mem_grow();
+                if(newPagePtr == NULL){
+                    sf_errno = ENOMEM;
+                    return NULL;
+                }
                 memset(sf_mem_end()  - 8,0,8);
                 epilogue = sf_mem_end() - 8;
                 coallesce(newPagePtr);
@@ -389,12 +400,47 @@ sf_free_list_node * get_sf_free_list_node(size_t size){
 }
 
 void sf_free(void *pp) {
-    sf_header* allocBlkHeader = pp - 8;
+    if(pp == NULL){
+        abort();
+    }
+    else if(pp < ((void*)(sf_mem_start() + 40))) {
+        abort();
+    }
+    else if(pp > ((void*)(sf_mem_end() - 8))){
+        abort();
+    }
+    sf_header* allocBlkHeader =(sf_header*)(pp - 8);
+    if(allocBlkHeader->info.allocated == 0){
+        abort();
+    }
     size_t block_size = allocBlkHeader->info.block_size << 4;
+    if(block_size % 16 != 0 || block_size < 32){
+        abort();
+    }
+    size_t required_size = allocBlkHeader->info.requested_size;
+    if(required_size % 16 != 0){
+            required_size += (16 - (required_size % 16));
+        }
+    if(required_size < 32)
+        required_size = 32;
+    if(required_size > block_size)
+        abort();
+
+    sf_footer* allocBlkFooter = (sf_footer*)((void*)allocBlkHeader - block_size + 8);
+    if(allocBlkFooter->info.allocated == 0){
+        abort();
+    }
+    if(allocBlkHeader->info.allocated == 0){
+        sf_footer* prevBlkFooter = (sf_footer*)(pp - 16);
+        if(prevBlkFooter->info.allocated == 1)
+            abort();
+        sf_header* prevBlkHeader = (sf_header*)((void*)prevBlkFooter - prevBlkFooter->info.block_size + 8);
+        if(prevBlkHeader->info.allocated == 1)
+            abort();
+    }
     allocBlkHeader->info.allocated = 0;
     allocBlkHeader->info.requested_size = 0;
-    sf_footer* allocBlkFooter = (sf_footer*)(allocBlkHeader + block_size - 8);
-    //program crushed on the line below
+
     allocBlkFooter->info.requested_size = 0;
     allocBlkFooter->info.block_size = block_size >> 4;
     allocBlkFooter->info.prev_allocated = allocBlkHeader->info.prev_allocated;
@@ -406,5 +452,77 @@ void sf_free(void *pp) {
 }
 
 void *sf_realloc(void *pp, size_t rsize) {
-    return NULL;
+    if(pp == NULL){
+        sf_errno = ENOMEM;
+    }
+    else if(pp < ((void*)(sf_mem_start() + 40))) {
+        sf_errno = ENOMEM;
+    }
+    else if(pp > ((void*)(sf_mem_end() - 8))){
+        sf_errno = ENOMEM;
+    }
+    sf_header* allocBlkHeader =(sf_header*)(pp - 8);
+    if(allocBlkHeader->info.allocated == 0){
+        sf_errno = ENOMEM;
+    }
+    size_t block_size = allocBlkHeader->info.block_size << 4;
+    if(block_size % 16 != 0 || block_size < 32){
+        sf_errno = ENOMEM;
+    }
+    size_t required_size = allocBlkHeader->info.requested_size;
+    if(required_size % 16 != 0){
+            required_size += (16 - (required_size % 16));
+        }
+    if(required_size < 32)
+        required_size = 32;
+    if(required_size > block_size)
+        sf_errno = ENOMEM;
+
+    sf_footer* allocBlkFooter = (sf_footer*)((void*)allocBlkHeader - block_size + 8);
+    if(allocBlkFooter->info.allocated == 0){
+        sf_errno = ENOMEM;
+    }
+    if(allocBlkHeader->info.allocated == 0){
+        sf_footer* prevBlkFooter = (sf_footer*)(pp - 16);
+        if(prevBlkFooter->info.allocated == 1)
+            sf_errno = ENOMEM;
+        sf_header* prevBlkHeader = (sf_header*)((void*)prevBlkFooter - prevBlkFooter->info.block_size + 8);
+        if(prevBlkHeader->info.allocated == 1)
+            sf_errno = ENOMEM;
+    }
+    if(rsize == 0){
+        sf_free(pp);
+        return NULL;
+    }
+
+    size_t newBlkSize = rsize;
+    newBlkSize = newBlkSize + 8;
+    if(newBlkSize % 16 != 0){
+        newBlkSize += (16 - (newBlkSize % 16));
+    }
+    if(newBlkSize < 32)
+        newBlkSize = 32;
+
+    if(newBlkSize > block_size){
+        void* ptrNewBlock = sf_malloc(newBlkSize);
+        memcpy(ptrNewBlock,pp,block_size);
+        sf_free(pp);
+        return ptrNewBlock;
+    }
+    else if(newBlkSize < block_size){
+        if((block_size - newBlkSize) < 32){
+            allocBlkHeader->info.requested_size = rsize;
+            return pp;
+        }
+        else{
+            allocBlkHeader->info.requested_size = rsize;
+            allocBlkHeader->info.block_size = newBlkSize >> 4;
+            void* newFreeBlock = (void*)allocBlkHeader + newBlkSize + 8;
+            sf_free(newFreeBlock);
+            return (void*)allocBlkHeader + 8;
+        }
+    }
+    else{
+        return pp;
+    }
 }
