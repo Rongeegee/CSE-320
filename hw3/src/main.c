@@ -4,9 +4,10 @@
 int main(int argc, char const *argv[]) {
     sf_mem_init();
 
-    double* ptr = sf_malloc(4016);
+    double* ptr = sf_malloc(3012);
 
-    *ptr = 320320320e-320;
+    // *ptr = 320320320e-320;
+    sf_realloc(ptr,4012);
 
     sf_show_heap();
     printf("%e\n", *ptr);
