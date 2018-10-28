@@ -192,7 +192,7 @@ void *sf_malloc(size_t size) {
                 freeFooter->info.prev_allocated = freeHeader->info.prev_allocated;
                 addFreeHeader(freeHeader);
                 coallesce(freeHeader);
-                sf_show_free_lists();
+
                 freeNode = get_sf_free_list_node(size);
             }
             if(freeNode->size == block_size){
@@ -270,7 +270,7 @@ void removeFromFreelist(sf_header* header){
 *coallesced free block. Otherwise, return pointer to the current sf_header if previous block and next block are not free
 */
 sf_header* coallesce(sf_header* freeBlockHeader){
-        sf_show_free_lists();
+
         int isLastFreeBlock;
         if(((void*)freeBlockHeader + (freeBlockHeader->info.block_size << 4)) == ((void*)epilogue)){
             isLastFreeBlock = 1;
@@ -399,13 +399,12 @@ sf_free_list_node* set_sf_free_list_node(size_t size){
    return NULL if no such node exists.
 */
 sf_free_list_node * get_sf_free_list_node(size_t size){
-    sf_show_free_lists();
     sf_free_list_node* current_node = sf_free_list_head.next;
     while (current_node != &sf_free_list_head){
         if(size <= (current_node-> size)){
             return current_node;
         }
-        current_node = (*current_node).next;
+        current_node = current_node->next;
     }
     return NULL;
 }
