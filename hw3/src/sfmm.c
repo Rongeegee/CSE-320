@@ -16,6 +16,7 @@ sf_header* coallesce(sf_header* freeBlockHeader);
 void removeFromFreelist(sf_header* header);
 void addFreeHeader(sf_header* header);
 void setNextHeader(sf_header* header);
+sf_free_list_node * get_sf_free_list_node_of_size(size_t size);
 
 sf_prologue* prologue;
 sf_epilogue* epilogue;
@@ -358,7 +359,7 @@ sf_header* coallesce(sf_header* freeBlockHeader){
 **/
 void addFreeHeader(sf_header* header){
     size_t block_size = header->info.block_size << 4;
-    if(get_sf_free_list_node(block_size) == NULL){
+    if(get_sf_free_list_node_of_size(block_size) == NULL){
         sf_free_list_node* freeNode = set_sf_free_list_node(block_size);
         freeNode->head.links.next = header;
         freeNode->head.links.prev = header;
@@ -366,7 +367,7 @@ void addFreeHeader(sf_header* header){
         header->links.prev = &freeNode->head;
     }
     else{
-        sf_free_list_node* freeNode = get_sf_free_list_node(block_size);
+        sf_free_list_node* freeNode = get_sf_free_list_node_of_size(block_size);
         sf_header* nextHeader = freeNode->head.links.next;
         freeNode->head.links.next = header;
         header->links.prev = &freeNode->head;
@@ -391,6 +392,17 @@ sf_free_list_node* set_sf_free_list_node(size_t size){
         current_node = current_node->next;
     }
     return sf_add_free_list(size,current_node);
+}
+
+sf_free_list_node * get_sf_free_list_node_of_size(size_t size){
+    sf_free_list_node* current_node = sf_free_list_head.next;
+    while (current_node != &sf_free_list_head){
+        if(size == (current_node-> size)){
+            return current_node;
+        }
+        current_node = current_node->next;
+    }
+    return NULL;
 }
 
 /* This function returns an address to the sf_free_list_node which contains the size.
