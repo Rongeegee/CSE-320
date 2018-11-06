@@ -44,13 +44,29 @@ int main(int argc, char *argv[])
             fileType[fileLen] = '\0';
             addPrinter(printerName, fileType);
         }
+        else if(strcmp(strtok(line_read," "),"conversion") == 0){
+            char* string1 = strtok(line_read + 11," ");
+            char* string2 = strtok(line_read + 12 + getLen(line_read + 11), " ");
+            char* fileType1 = malloc(strlen(string1)*sizeof(char));
+            char* fileType2 = malloc(strlen(string2)*sizeof(char));
+            strcpy(fileType1, string1);
+            strcpy(fileType2,string2);
+
+        }
+        free(line_read);
     }
     //line_read needs to be freed when no longer in used
 
     char optval;
     while(optind < argc) {
-	if((optval = getopt(argc, argv, "")) != -1) {
+	if((optval = getopt(argc, argv, "i:o:")) != -1) {
 	    switch(optval) {
+            case 'i':
+
+                break;
+            case 'o':
+
+                break;
 	       case '?':
 		      fprintf(stderr, "Usage: %s [-i <cmd_file>] [-o <out_file>]\n", argv[0]);
 		      exit(EXIT_FAILURE);
@@ -62,7 +78,6 @@ int main(int argc, char *argv[])
     }
     exit(EXIT_SUCCESS);
 }
-
 
 int getLen(char* line){
     int len = 0;
