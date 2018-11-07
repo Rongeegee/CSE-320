@@ -33,9 +33,11 @@ typedef struct convertible
 
 void addFileType(char* type);
 void addPrinter(char* name, char* type);
+void addConvertFile(char* type1, char* type2);
 int getFTIndex(char* line);
 int getPNIndex(char* line);
 int getLen(char* line);
+int typeExisted(char* fileType);
 
 file_type* type_head;
 printer_address* printer_head;

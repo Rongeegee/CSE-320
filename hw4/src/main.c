@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
 {
     type_head = NULL;
     printer_head = NULL;
+    convert_head = NULL;
 
     char *line_read;
     while(1){
@@ -51,7 +52,41 @@ int main(int argc, char *argv[])
             char* fileType2 = malloc(strlen(string2)*sizeof(char));
             strcpy(fileType1, string1);
             strcpy(fileType2,string2);
-
+            if(typeExisted(fileType1) == 0){
+                free(fileType1);
+                free(fileType2);
+                fprintf(stderr, "%s\n", "file_type1 has not been declare");
+                continue;
+            }
+            else if(typeExisted(fileType2) == 0){
+                free(fileType1);
+                free(fileType2);
+                fprintf(stderr, "%s\n", "file_type2 has not been declare");
+                continue;
+            }
+            addConvertFile(fileType1,fileType2);
+        }
+        else if(strcmp(strtok(line_read, " "),"printers") == 0){
+            printer_address* printer = printer_head;
+            while(printer != NULL){
+                fprintf(stdout, "%s", "PRINTER, ");
+                fprintf(stdout, "%d, ", printer->printer->id);
+                fprintf(stdout, "%s, ", printer->printer->name);
+                fprintf(stdout, "%s, ", printer->printer->type);
+                if(printer->printer->enabled == 1){
+                    fprintf(stdout, "%s, ", "enabled");
+                }
+                else{
+                    fprintf(stdout, "%s, ", "disabled");
+                }
+                if(printer->printer->busy == 1){
+                    fprintf(stdout, "%s, ", "busy");
+                }
+                else{
+                    fprintf(stdout, "%s\n", "idle");
+                }
+                printer = printer->next;
+            }
         }
         free(line_read);
     }
@@ -77,6 +112,43 @@ int main(int argc, char *argv[])
 	}
     }
     exit(EXIT_SUCCESS);
+}
+
+int typeExisted(char* fileType){
+    file_type* type = type_head;
+    while(type != NULL){
+        if(strcmp(type->name, fileType) == 0){
+            return 1;
+        }
+        type = type->next;
+    }
+    return 0;
+}
+
+void addConvertFile(char* type1, char* type2){
+    if(convert_head == NULL){
+        convert_head = (convertible*)malloc(sizeof(convertible));
+        convert_head->original_type = type1;
+        convert_head->new_type = type2;
+        convert_head->next = NULL;
+    }
+    else{
+        convertible* conversion = convert_head;
+        while(conversion->next != NULL){
+            if((strcmp(conversion->original_type,type1) == 0) && (strcmp(conversion->new_type, type2) == 0)){
+                return;
+            }
+            conversion = conversion->next;
+        }
+        if((strcmp(conversion->original_type,type1) == 0) && (strcmp(conversion->new_type, type2) == 0)){
+            return;
+        }
+        convertible* convertTypes = (convertible*)malloc(sizeof(convertible));
+        convertTypes->original_type = type1;
+        convertTypes->new_type = type2;
+        convertTypes->next = NULL;
+        conversion->next = convertTypes;
+    }
 }
 
 int getLen(char* line){
