@@ -9,7 +9,7 @@ int isQuit(char* line);
 int isTypeCommand(char* line);
 int isPrinter(char* line);
 int isConversion(char* line);
-
+int getNumOfWords(char* line);
 
 
 typedef struct file_type
@@ -38,10 +38,12 @@ int getFTIndex(char* line);
 int getPNIndex(char* line);
 int getLen(char* line);
 int typeExisted(char* fileType);
+void addToPrinterSet(int id);
 
 file_type* type_head;
 printer_address* printer_head;
 convertible* convert_head;
+PRINTER_SET printer_set;
 
 
 #endif

@@ -9,6 +9,7 @@
 #include <readline/history.h>
 #include "helper.h"
 #include <string.h>
+ #include <unistd.h>
 
 /*
  * "Imprimer" printer spooler.
@@ -48,6 +49,9 @@ int main(int argc, char *argv[])
         else if(strcmp(strtok(line_read," "),"conversion") == 0){
             char* string1 = strtok(line_read + 11," ");
             char* string2 = strtok(line_read + 12 + getLen(line_read + 11), " ");
+            char* string3 = line_read + 11 + getLen(string1) + getLen(string2) + 2;
+
+
             char* fileType1 = malloc(strlen(string1)*sizeof(char));
             char* fileType2 = malloc(strlen(string2)*sizeof(char));
             strcpy(fileType1, string1);
@@ -64,7 +68,28 @@ int main(int argc, char *argv[])
                 fprintf(stderr, "%s\n", "file_type2 has not been declare");
                 continue;
             }
-            addConvertFile(fileType1,fileType2);
+
+            char* conversion_program = malloc(strlen(string3)*sizeof(char));
+            strcpy(conversion_program,string3);
+            int numOfwords = getNumOfWords(conversion_program);
+            char* p = conversion_program;
+            char* rv[numOfwords + 1];
+            for(int i = 0; i < numOfwords + 1; i++){
+                if(i < numOfwords){
+                    rv[i] = strtok(p," ");
+                    p = p + strlen(rv[i]) + 1;
+                }
+                else{
+                    rv[i] = NULL;
+                }
+            }
+
+            if(execve(rv[0],rv, NULL) == -1){
+                fprintf(stderr, "%s\n", "NOT ok");
+            }
+            else{
+                fprintf(stdout, "%s\n", "OK");
+            }
         }
         else if(strcmp(strtok(line_read, " "),"printers") == 0){
             printer_address* printer = printer_head;
@@ -88,9 +113,11 @@ int main(int argc, char *argv[])
                 printer = printer->next;
             }
         }
+        else if(strcmp(strtok(line_read, " "),"print") == 0){
+
+        }
         free(line_read);
     }
-    //line_read needs to be freed when no longer in used
 
     char optval;
     while(optind < argc) {
@@ -114,6 +141,26 @@ int main(int argc, char *argv[])
     exit(EXIT_SUCCESS);
 }
 
+int getNumOfWords(char* line){
+    int length = 0;
+    int numOfwords = 0;
+    if(*line == '\0')
+        return 0;
+    while(*line != '\0'){
+        if(*line == ' '){
+            numOfwords++;
+        }
+        line++;
+        length++;
+    }
+    numOfwords++;
+    while(length != 0){
+        line--;
+        length--;
+    }
+    return numOfwords;
+}
+
 int typeExisted(char* fileType){
     file_type* type = type_head;
     while(type != NULL){
@@ -123,6 +170,10 @@ int typeExisted(char* fileType){
         type = type->next;
     }
     return 0;
+}
+
+void addToPrinterSet(int id){
+     printer_set |= (1 << id);
 }
 
 void addConvertFile(char* type1, char* type2){
@@ -240,6 +291,7 @@ void addPrinter(char* name, char* type){
         printer->busy = 0;
         printer->other_info = NULL;
         printer_head->next = NULL;
+        addToPrinterSet(0);
     }
     else{
         printer_address* current_printer = printer_head;
@@ -275,6 +327,7 @@ void addPrinter(char* name, char* type){
         current_printer->next = printer_address;
         printer_address->printer = printer;
         printer_address->next = NULL;
+        addToPrinterSet(printer->id);
     }
 }
 
