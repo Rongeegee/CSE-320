@@ -9,8 +9,8 @@
 #include <readline/history.h>
 #include "helper.h"
 #include <string.h>
- #include <unistd.h>
-
+#include <unistd.h>
+#include "graph.h"
 /*
  * "Imprimer" printer spooler.
  */
@@ -20,6 +20,37 @@ int main(int argc, char *argv[])
     type_head = NULL;
     printer_head = NULL;
     convert_head = NULL;
+    VHead = NULL;
+
+
+    addVertex("carrot");
+    addVertex("spinage");
+    addVertex("banana");
+    addVertex("apple");
+    addVertex("pineapple");
+    addVertex("kiwi");
+    addVertex("melon");
+    addVertex("eggplant");
+    addVertex("lemon");
+
+    addAjdVertex("carrot","spinage");
+    addAjdVertex("carrot","banana");
+    addAjdVertex("banana","kiwi");
+    addAjdVertex("spinage","apple");
+    addAjdVertex("apple","pineapple");
+    addAjdVertex("apple","eggplant");
+    addAjdVertex("apple","melon");
+    addAjdVertex("banana","lemon");
+    addAjdVertex("banana","apple");
+    addAjdVertex("lemon","apple");
+
+
+    getFilePath("banana","melon");
+    pathNode* currentNode = pathHead;
+    while(currentNode!=NULL){
+        printf("%s\n", currentNode->value);
+        currentNode = currentNode->forward;
+    }
 
     char *line_read;
     while(1){
@@ -84,7 +115,10 @@ int main(int argc, char *argv[])
                 }
             }
 
-            if(execve(rv[0],rv, NULL) == -1){
+            //wrong, can't contatentate
+            char* filePath = malloc((strlen("/bin/") + strlen(rv[0]))* sizeof(char));
+            filePath = strcat("/bin/",rv[0]);
+            if(execve(filePath,rv, NULL) == -1){
                 fprintf(stderr, "%s\n", "NOT ok");
             }
             else{
