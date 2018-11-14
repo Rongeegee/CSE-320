@@ -43,6 +43,8 @@ typedef struct pathNode{
     struct pathNode* backward;
 }pathNode;
 
+
+
 visitedNode* visitedHead;
 visitedNode* visitedTail;
 unvisitedNode* unvisitedHead;

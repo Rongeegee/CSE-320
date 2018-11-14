@@ -28,12 +28,13 @@ typedef struct convertible
 {
     char* original_type;
     char* new_type;
+    char* conversion_program;
     struct convertible *next;
 }convertible;
 
 void addFileType(char* type);
 void addPrinter(char* name, char* type);
-void addConvertFile(char* type1, char* type2);
+void addConvertFile(char* type1, char* type2, char* cp);
 int getFTIndex(char* line);
 int getPNIndex(char* line);
 int getLen(char* line);

@@ -23,29 +23,6 @@ int main(int argc, char *argv[])
     VHead = NULL;
 
 
-    addVertex("carrot");
-    addVertex("spinage");
-    addVertex("banana");
-    addVertex("apple");
-    addVertex("pineapple");
-    addVertex("kiwi");
-    addVertex("melon");
-    addVertex("eggplant");
-    addVertex("lemon");
-
-    addAjdVertex("carrot","spinage");
-    addAjdVertex("carrot","banana");
-    addAjdVertex("banana","kiwi");
-    addAjdVertex("spinage","apple");
-    addAjdVertex("apple","pineapple");
-    addAjdVertex("apple","eggplant");
-    addAjdVertex("apple","melon");
-    addAjdVertex("banana","lemon");
-    addAjdVertex("banana","apple");
-    addAjdVertex("lemon","apple");
-
-
-    getFilePath("banana","melon");
     pathNode* currentNode = pathHead;
     while(currentNode!=NULL){
         printf("%s\n", currentNode->value);
@@ -99,31 +76,13 @@ int main(int argc, char *argv[])
                 fprintf(stderr, "%s\n", "file_type2 has not been declare");
                 continue;
             }
+            addVertex(fileType1);
+            addVertex(fileType2);
+            addAjdVertex(fileType1,fileType2);
 
             char* conversion_program = malloc(strlen(string3)*sizeof(char));
             strcpy(conversion_program,string3);
-            int numOfwords = getNumOfWords(conversion_program);
-            char* p = conversion_program;
-            char* rv[numOfwords + 1];
-            for(int i = 0; i < numOfwords + 1; i++){
-                if(i < numOfwords){
-                    rv[i] = strtok(p," ");
-                    p = p + strlen(rv[i]) + 1;
-                }
-                else{
-                    rv[i] = NULL;
-                }
-            }
-
-            //wrong, can't contatentate
-            char* filePath = malloc((strlen("/bin/") + strlen(rv[0]))* sizeof(char));
-            filePath = strcat("/bin/",rv[0]);
-            if(execve(filePath,rv, NULL) == -1){
-                fprintf(stderr, "%s\n", "NOT ok");
-            }
-            else{
-                fprintf(stdout, "%s\n", "OK");
-            }
+            addConvertFile(fileType1,fileType2,conversion_program);
         }
         else if(strcmp(strtok(line_read, " "),"printers") == 0){
             printer_address* printer = printer_head;
@@ -210,27 +169,35 @@ void addToPrinterSet(int id){
      printer_set |= (1 << id);
 }
 
-void addConvertFile(char* type1, char* type2){
+void addConvertFile(char* type1, char* type2,char* cp){
     if(convert_head == NULL){
         convert_head = (convertible*)malloc(sizeof(convertible));
         convert_head->original_type = type1;
         convert_head->new_type = type2;
+        convert_head->conversion_program = cp;
         convert_head->next = NULL;
     }
     else{
         convertible* conversion = convert_head;
         while(conversion->next != NULL){
-            if((strcmp(conversion->original_type,type1) == 0) && (strcmp(conversion->new_type, type2) == 0)){
+            if((strcmp(conversion->original_type,type1) == 0) && (strcmp(conversion->new_type, type2) == 0) && (strcmp(conversion->conversion_program,cp) == 0)){
+                free(type1);
+                free(type2);
+                free(cp);
                 return;
             }
             conversion = conversion->next;
         }
-        if((strcmp(conversion->original_type,type1) == 0) && (strcmp(conversion->new_type, type2) == 0)){
+        if((strcmp(conversion->original_type,type1) == 0) && (strcmp(conversion->new_type, type2) == 0) && (strcmp(conversion->conversion_program,cp) == 0)){
+            free(type1);
+            free(type2);
+            free(cp);
             return;
         }
         convertible* convertTypes = (convertible*)malloc(sizeof(convertible));
         convertTypes->original_type = type1;
         convertTypes->new_type = type2;
+        convertTypes->conversion_program = cp;
         convertTypes->next = NULL;
         conversion->next = convertTypes;
     }
