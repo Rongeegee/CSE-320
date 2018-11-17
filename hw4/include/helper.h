@@ -61,5 +61,5 @@ PRINTER_SET printer_set;
 PRINTER_SET* eligible_printers;
 
 char buff[20000];
-
+char batchBuff[1024];
 #endif
