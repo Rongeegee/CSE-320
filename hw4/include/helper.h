@@ -10,7 +10,7 @@ int isTypeCommand(char* line);
 int isPrinter(char* line);
 int isConversion(char* line);
 int getNumOfWords(char* line);
-
+void addJob();
 
 typedef struct file_type
 {
@@ -32,6 +32,11 @@ typedef struct convertible
     struct convertible *next;
 }convertible;
 
+typedef struct jobNode{
+    JOB* job;
+    struct jobNode* nextJob;
+}jobNode;
+
 void addFileType(char* type);
 void addPrinter(char* name, char* type);
 void addConvertFile(char* type1, char* type2, char* cp);
@@ -40,11 +45,21 @@ int getPNIndex(char* line);
 int getLen(char* line);
 int typeExisted(char* fileType);
 void addToPrinterSet(int id);
+void rmFromPrinterSet(int id);
+int printerExisted(char* printerName);
+int printerAvailable(char* printerName,char* fileType);
+PRINTER* getPrinter(char* printerName);
+JOB* getJob(char* fileName, char* fileType, PRINTER* printer);
+void printSameFileType(char* fileName, char* extension,PRINTER* eligible_printer);
 
 file_type* type_head;
 printer_address* printer_head;
 convertible* convert_head;
 PRINTER_SET printer_set;
+jobNode* jobHead;
+PRINTER_SET printer_set;
+PRINTER_SET* eligible_printers;
 
+char buff[20000];
 
 #endif

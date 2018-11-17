@@ -11,27 +11,73 @@
 #include <string.h>
 #include <unistd.h>
 #include "graph.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+
 /*
  * "Imprimer" printer spooler.
  */
 
 int main(int argc, char *argv[])
 {
+
+    // char optval;
+    // FILE* input_file;
+    // FILE* output_file;
+    // int batch_mode = 0;
+    // int output_mode = 0;
+    // if(argc > 1){
+    //     while(optind < argc) {
+    //     if((optval = getopt(argc, argv, "i:o:")) != -1) {
+    //         if(strcmp(argv[1],"-i") != 0 && strcmp(argv[1],"-o") == 0){
+    //             fprintf(stderr, "Usage: %s [-i <cmd_file>] [-o <out_file>]\n", argv[0]);
+    //             exit(EXIT_FAILURE);
+    //             break;
+    //         }
+    //         switch(optval) {
+    //             case 'i':
+    //                 input_file = fopen(optarg,"r");
+    //                 batch_mode = 1;
+    //                 if(input_file == NULL){
+    //                     fprintf(stderr, "%s\n", "File does NOT exit");
+    //                     exit(EXIT_FAILURE);
+    //                 }
+    //                 break;
+    //             case 'o':
+    //                 output_file = fopen(optarg,"w");
+    //                 output_mode = 1;
+    //                 break;
+    //            case '?':
+    //               fprintf(stderr, "Usage: %s [-i <cmd_file>] [-o <out_file>]\n", argv[0]);
+    //               exit(EXIT_FAILURE);
+    //               break;
+    //         default:
+    //             break;
+    //         }
+    //     }
+    //     }
+    //     if(batch_mode == 1 || output_mode == 1 || argc == 1){
+
+
+    //     }
+    // }
+
+    // exit(EXIT_SUCCESS);
+
     type_head = NULL;
     printer_head = NULL;
     convert_head = NULL;
     VHead = NULL;
-
-
-    pathNode* currentNode = pathHead;
-    while(currentNode!=NULL){
-        printf("%s\n", currentNode->value);
-        currentNode = currentNode->forward;
-    }
-
+    printer_set = 0;
+    eligible_printers = &printer_set;
     char *line_read;
     while(1){
         line_read = readline ("imp> ");
+        if(strcmp(line_read,"") == 0){
+            continue;
+        }
         if(isHelp(line_read) == 1){
             fprintf(stdout, "%s\n", "Miscallaneous Commands, Configuration Commands, Informational Commands, Spooling Commands.");
         }
@@ -106,327 +152,94 @@ int main(int argc, char *argv[])
                 printer = printer->next;
             }
         }
+        else if(strcmp(strtok(line_read, " "),"jobs") == 0){
+            char* s;
+            jobNode* job = jobHead;
+            while(job != NULL){
+                s = imp_format_job_status(job->job,buff,20000);
+                fprintf(stdout, "%s\n", s);
+                job = job->nextJob;
+            }
+            free(s);
+        }
         else if(strcmp(strtok(line_read, " "),"print") == 0){
+            char* fileName = strtok(line_read + 6, " ");
+            char *extension = strrchr(fileName, '.') + 1;
+            if(typeExisted(extension) == 0){
+                fprintf(stderr, "%s\n", "File Type has not been declare.");
+                continue;
+            }
+            char* printers = fileName+strlen(fileName)+1;
+            int printers_length = strlen(printers);
+            if(printers_length > 0){
+                int printedWithOptional = 0;
+                while(printers_length > 0){
+                    char* printerName = strtok(printers," ");
+                    if(printerExisted(printerName) == 0){
+                        fprintf(stderr, "%s ", printerName);
+                        fprintf(stderr, "%s\n","has not been defined");
+                        break;
+                    }
+                    else{
+                        if(printerAvailable(printerName,extension) == 1){
+                            PRINTER* printer = getPrinter(printerName);
+                            printSameFileType(fileName,extension,printer);
+                            printedWithOptional = 1;
+                            break;
+                        }
+                    }
+                    printers = printers + strlen(printerName) + 1;
+                    printers_length = printers_length - strlen(printerName) - 1;
+                }
+                if(printedWithOptional == 1){
+                    free(line_read);
+                    continue;
+                }
+            }
+            PRINTER* eligible_printer = NULL;
+            printer_address* printer_address = printer_head;
+            while(printer_address != NULL){
+                if(strcmp(printer_address->printer->type,extension) == 0 && printer_address->printer->busy == 0 && printer_address->printer->enabled == 1){
+                    eligible_printer = printer_address->printer;
+                }
+                printer_address = printer_address->next;
+            }
+            if(eligible_printer != NULL){
+                printSameFileType(fileName, extension, eligible_printer);
+            }
+            else{
+                //now, we need to do conversion pipeline
+            }
 
+        }
+        else if(strcmp(strtok(line_read, " "),"enable") == 0){
+            char* printerName = strtok(line_read + 7, " ");
+            printer_address* printer_address = printer_head;
+            while(printer_address != NULL){
+                if(strcmp(printer_address->printer->name,printerName) == 0){
+                    printer_address->printer->enabled = 1;
+                    addToPrinterSet(printer_address->printer->id);
+                    break;
+                }
+                printer_address = printer_address->next;
+            }
+        }
+        else if(strcmp(strtok(line_read, " "),"disable") == 0){
+            char* printerName = strtok(line_read + 8, " ");
+            printer_address* printer_address = printer_head;
+            while(printer_address != NULL){
+                if(strcmp(printer_address->printer->name,printerName) == 0){
+                    printer_address->printer->enabled = 0;
+                    rmFromPrinterSet(printer_address->printer->id);
+                    break;
+                }
+                printer_address = printer_address->next;
+            }
         }
         free(line_read);
     }
 
-    char optval;
-    while(optind < argc) {
-	if((optval = getopt(argc, argv, "i:o:")) != -1) {
-	    switch(optval) {
-            case 'i':
 
-                break;
-            case 'o':
-
-                break;
-	       case '?':
-		      fprintf(stderr, "Usage: %s [-i <cmd_file>] [-o <out_file>]\n", argv[0]);
-		      exit(EXIT_FAILURE);
-		      break;
-	    default:
-            break;
-	    }
-	}
-    }
     exit(EXIT_SUCCESS);
 }
 
-int getNumOfWords(char* line){
-    int length = 0;
-    int numOfwords = 0;
-    if(*line == '\0')
-        return 0;
-    while(*line != '\0'){
-        if(*line == ' '){
-            numOfwords++;
-        }
-        line++;
-        length++;
-    }
-    numOfwords++;
-    while(length != 0){
-        line--;
-        length--;
-    }
-    return numOfwords;
-}
-
-int typeExisted(char* fileType){
-    file_type* type = type_head;
-    while(type != NULL){
-        if(strcmp(type->name, fileType) == 0){
-            return 1;
-        }
-        type = type->next;
-    }
-    return 0;
-}
-
-void addToPrinterSet(int id){
-     printer_set |= (1 << id);
-}
-
-void addConvertFile(char* type1, char* type2,char* cp){
-    if(convert_head == NULL){
-        convert_head = (convertible*)malloc(sizeof(convertible));
-        convert_head->original_type = type1;
-        convert_head->new_type = type2;
-        convert_head->conversion_program = cp;
-        convert_head->next = NULL;
-    }
-    else{
-        convertible* conversion = convert_head;
-        while(conversion->next != NULL){
-            if((strcmp(conversion->original_type,type1) == 0) && (strcmp(conversion->new_type, type2) == 0) && (strcmp(conversion->conversion_program,cp) == 0)){
-                free(type1);
-                free(type2);
-                free(cp);
-                return;
-            }
-            conversion = conversion->next;
-        }
-        if((strcmp(conversion->original_type,type1) == 0) && (strcmp(conversion->new_type, type2) == 0) && (strcmp(conversion->conversion_program,cp) == 0)){
-            free(type1);
-            free(type2);
-            free(cp);
-            return;
-        }
-        convertible* convertTypes = (convertible*)malloc(sizeof(convertible));
-        convertTypes->original_type = type1;
-        convertTypes->new_type = type2;
-        convertTypes->conversion_program = cp;
-        convertTypes->next = NULL;
-        conversion->next = convertTypes;
-    }
-}
-
-int getLen(char* line){
-    int len = 0;
-    int length = 0;
-    while (*line != ' ' && *line != '\0'){
-        len++;
-        length++;
-        line++;
-    }
-    while(length != 0){
-        line--;
-        length--;
-    }
-    return len;
-}
-
-int getPNIndex(char* line){
-    int incremented = 0;
-    while(*line != ' '){
-        line++;
-        incremented++;
-    }
-    while(*line == ' '){
-        line++;
-        incremented++;
-    }
-    int index = incremented ;
-    while(incremented != 0){
-        line--;
-        incremented--;
-    }
-    return index;
-}
-
-int getFTIndex(char* line){
-    int incremented = 0;
-    while(*line != ' '){
-        line++;
-        incremented++;
-    }
-    while(*line == ' '){
-        line++;
-        incremented++;
-    }
-    while(*line != ' '){
-        line++;
-        incremented++;
-    }
-    while(*line == ' '){
-        line++;
-        incremented++;
-    }
-    int index = incremented ;
-    while(incremented != 0){
-        line--;
-        incremented--;
-    }
-    return index;
-}
-
-void addPrinter(char* name, char* type){
-    if(type_head == NULL){
-        fprintf(stderr, "%s\n", "File type has not been declared.");
-        free(name);
-        free(type);
-        return;
-    }
-    file_type* FT = type_head;
-    while(FT != NULL){
-        if(strcmp(FT->name,type) == 0)
-            break;
-        if(FT->next == NULL){
-            fprintf(stderr, "%s\n", "File type has not been declared.");
-            free(name);
-            free(type);
-            return;
-        }
-        FT = FT->next;
-    }
-    if(printer_head == NULL){
-        printer_head = (printer_address*)malloc(sizeof(printer_address));
-        PRINTER* printer = (PRINTER*) malloc(sizeof(PRINTER));
-        printer_head->printer = printer;
-        printer->id = 0;
-        printer->name = name;
-        printer->type = type;
-        printer->enabled = 1;
-        printer->busy = 0;
-        printer->other_info = NULL;
-        printer_head->next = NULL;
-        addToPrinterSet(0);
-    }
-    else{
-        printer_address* current_printer = printer_head;
-        while(current_printer->next != NULL){
-            if(current_printer->printer->id == 31){
-                fprintf(stderr, "%s\n", "Number of Printer is already maximum");
-                free(name);
-                free(type);
-                return;
-            }
-            else if(strcmp(current_printer->printer->name, name) == 0){
-                fprintf(stderr, "%s\n", "Printer name already exists");
-                free(name);
-                free(type);
-                return;
-            }
-            current_printer = current_printer->next;
-        }
-        if(strcmp(current_printer->printer->name, name) == 0){
-                fprintf(stderr, "%s\n", "Printer name already exists");
-                free(name);
-                free(type);
-                return;
-            }
-        PRINTER* printer = (PRINTER*) malloc(sizeof(PRINTER));
-        printer_address* printer_address = malloc(sizeof(printer_address));
-        printer->id = current_printer->printer->id + 1;
-        printer->name = name;
-        printer->type = type;
-        printer->enabled = 1;
-        printer->busy = 0;
-        printer->other_info = NULL;
-        current_printer->next = printer_address;
-        printer_address->printer = printer;
-        printer_address->next = NULL;
-        addToPrinterSet(printer->id);
-    }
-}
-
-int isPrinter(char* line){
-    if(*line == 'p'){
-        if(*(line + 1) == 'r'){
-            if(*(line + 2) == 'i'){
-                if(*(line + 3) == 'n'){
-                    if(*(line + 4) == 't'){
-                        if(*(line + 5) == 'e'){
-                            if(*(line + 6) == 'r'){
-                                if(*(line + 7) == ' ')
-                                    return 1;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return 0;
-}
-
-void addFileType(char* type){
-    if(type_head == NULL){
-        type_head = (file_type*)malloc(sizeof(file_type));
-        char* name = (char*)malloc(strlen(type) * sizeof(char));
-        strcpy(name,type);
-        type_head->name = name;
-        type_head->next = NULL;
-    }
-    else{
-        if(strcmp(type_head->name,type) == 0){
-            fprintf(stderr, "%s\n", "File type already exists");
-            return;
-        }
-        file_type* current_type = type_head;
-        while(current_type->next != NULL){
-            if(strcmp(current_type->name,type) == 0){
-                fprintf(stderr, "%s\n", "File type already exists");
-                return;
-            }
-            current_type = current_type->next;
-        }
-        if(strcmp(current_type->name,type) == 0){
-            fprintf(stderr, "%s\n", "File type already exists");
-            return;
-        }
-        file_type* newType = (file_type*)malloc(sizeof(file_type));
-        char* name = (char*)malloc(strlen(type) * sizeof(char));
-        strcpy(name,type);
-        newType->name = name;
-        newType->next = NULL;
-        current_type->next = newType;
-    }
-}
-
-int isTypeCommand(char* line){
-    if(*line == 't'){
-        if(*(line + 1) == 'y'){
-            if(*(line + 2) == 'p'){
-                if(*(line + 3) == 'e'){
-                    if(*(line + 4) == ' '){
-                        return 1;
-                    }
-                }
-            }
-        }
-    }
-    return 0;
-}
-
-int isHelp(char* line){
-    if(*line == 'h'){
-        if(*(line + 1) == 'e'){
-            if(*(line + 2) == 'l'){
-                if(*(line + 3) == 'p'){
-                    if(*(line + 4) == '\0'){
-                        return 1;
-                    }
-                }
-            }
-        }
-    }
-    return 0;
-}
-
-int isQuit(char* line){
-    if(*line == 'q'){
-        if(*(line + 1) == 'u'){
-            if(*(line + 2) == 'i'){
-                if(*(line + 3) == 't'){
-                    if(*(line + 4) == '\0'){
-                        return 1;
-                    }
-                }
-            }
-        }
-    }
-    return 0;
-}
