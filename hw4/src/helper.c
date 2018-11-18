@@ -80,6 +80,8 @@ JOB* getJob(char* fileName, char* fileType,PRINTER* printer){
         return job;
     }
 }
+
+
 int printerAvailable(char* printerName,char* fileType){
     printer_address* current_printer_address = printer_head;
     while(current_printer_address != NULL){
@@ -376,6 +378,17 @@ void addPrinter(char* name, char* type){
         printer_address->printer = printer;
         printer_address->next = NULL;
     }
+}
+
+char* getConversionProgram(char* type1, char* type2){
+    convertible* convert = convert_head;
+    while(convert != NULL){
+        if (strcmp(convert->original_type,type1) == 0 && strcmp(convert->new_type, type2) == 0){
+            return convert->conversion_program;
+        }
+        convert = convert->next;
+    }
+    return NULL;
 }
 
 int isPrinter(char* line){
