@@ -51,6 +51,8 @@ int printerAvailable(char* printerName,char* fileType);
 PRINTER* getPrinter(char* printerName);
 JOB* getJob(char* fileName, char* fileType, PRINTER* printer);
 void printSameFileType(char* fileName, char* extension,PRINTER* eligible_printer);
+void printErrorMsg(char* msg);
+void printOldJob(JOB* job, char* fileName, char* extension,PRINTER* eligible_printer);
 
 file_type* type_head;
 printer_address* printer_head;
@@ -62,4 +64,5 @@ PRINTER_SET* eligible_printers;
 
 char buff[20000];
 char batchBuff[1024];
+char errorMsg[60];
 #endif

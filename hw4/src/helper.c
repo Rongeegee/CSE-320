@@ -84,9 +84,7 @@ int printerAvailable(char* printerName,char* fileType){
     while(current_printer_address != NULL){
         if(strcmp(printerName,current_printer_address->printer->name) == 0){
             if(strcmp(current_printer_address->printer->type,fileType) == 0){
-                if(current_printer_address->printer->enabled == 1 && current_printer_address->printer->busy == 0){
-                    return 1;
-                }
+                return 1;
             }
         }
         current_printer_address = current_printer_address->next;
@@ -119,25 +117,56 @@ void printSameFileType(char* fileName, char* extension,PRINTER* eligible_printer
     pid_t childPid  = fork();
     eligible_printer->busy = 1;
     JOB* job = getJob(fileName, extension,eligible_printer);
+    addJob(job);
+    rmFromPrinterSet(eligible_printer->id);
+    job->status = RUNNING;
+    gettimeofday(&job->change_time,NULL);
     if(childPid  == 0){
-        addJob(job);
-        rmFromPrinterSet(eligible_printer->id);
         int fdOfFile = open(fileName,O_RDONLY);
         dup2(fdOfFile,0);
         char* rv[] = {"/bin/cat",NULL};
         int fd = imp_connect_to_printer(eligible_printer,PRINTER_NORMAL);
         dup2(fd,1);
-        job->status = RUNNING;
         execve(rv[0],rv,NULL);
         exit(EXIT_FAILURE);
     }
     else if(childPid < 0){
-        fprintf(stderr, "%s\n", "An error has occur");
+        printErrorMsg("An error has occur");
         return;
     }
     else{
         int returnStatus;
         waitpid(childPid, &returnStatus, 0);
+        gettimeofday(&job->change_time,NULL);
+        addToPrinterSet(eligible_printer->id);
+        job->status = COMPLETED;
+    }
+}
+
+void printOldJob(JOB* job, char* fileName, char* extension,PRINTER* eligible_printer){
+    pid_t childPid  = fork();
+    eligible_printer->busy = 1;
+    rmFromPrinterSet(eligible_printer->id);
+    job->status = RUNNING;
+    gettimeofday(&job->change_time,NULL);
+    if(childPid  == 0){
+        int fdOfFile = open(fileName,O_RDONLY);
+        dup2(fdOfFile,0);
+        char* rv[] = {"/bin/cat",NULL};
+        int fd = imp_connect_to_printer(eligible_printer,PRINTER_NORMAL);
+        dup2(fd,1);
+        execve(rv[0],rv,NULL);
+        exit(EXIT_FAILURE);
+    }
+    else if(childPid < 0){
+        printErrorMsg("An error has occur");
+        return;
+    }
+    else{
+        int returnStatus;
+        waitpid(childPid, &returnStatus, 0);
+        gettimeofday(&job->change_time,NULL);
+        addToPrinterSet(eligible_printer->id);
         job->status = COMPLETED;
     }
 }
@@ -276,9 +305,13 @@ int getFTIndex(char* line){
     return index;
 }
 
+void printErrorMsg(char* msg){
+    printf("%s\n",imp_format_error_message(msg,errorMsg,60));
+}
+
 void addPrinter(char* name, char* type){
     if(type_head == NULL){
-        fprintf(stderr, "%s\n", "File type has not been declared.");
+        printErrorMsg("File type has not been declared.");
         free(name);
         free(type);
         return;
@@ -288,7 +321,7 @@ void addPrinter(char* name, char* type){
         if(strcmp(FT->name,type) == 0)
             break;
         if(FT->next == NULL){
-            fprintf(stderr, "%s\n", "File type has not been declared.");
+            printErrorMsg("File type has not been declared");
             free(name);
             free(type);
             return;
@@ -311,13 +344,13 @@ void addPrinter(char* name, char* type){
         printer_address* current_printer = printer_head;
         while(current_printer->next != NULL){
             if(current_printer->printer->id == 31){
-                fprintf(stderr, "%s\n", "Number of Printer is already maximum");
+                printErrorMsg("Number of Printer is already maximum");
                 free(name);
                 free(type);
                 return;
             }
             else if(strcmp(current_printer->printer->name, name) == 0){
-                fprintf(stderr, "%s\n", "Printer name already exists");
+                printErrorMsg("Printer name already exists");
                 free(name);
                 free(type);
                 return;
@@ -325,7 +358,7 @@ void addPrinter(char* name, char* type){
             current_printer = current_printer->next;
         }
         if(strcmp(current_printer->printer->name, name) == 0){
-                fprintf(stderr, "%s\n", "Printer name already exists");
+                printErrorMsg("Printer name already exists");
                 free(name);
                 free(type);
                 return;
@@ -374,19 +407,19 @@ void addFileType(char* type){
     }
     else{
         if(strcmp(type_head->name,type) == 0){
-            fprintf(stderr, "%s\n", "File type already exists");
+            printErrorMsg("File type already exists");
             return;
         }
         file_type* current_type = type_head;
         while(current_type->next != NULL){
             if(strcmp(current_type->name,type) == 0){
-                fprintf(stderr, "%s\n", "File type already exists");
+                printErrorMsg("File type already exists");
                 return;
             }
             current_type = current_type->next;
         }
         if(strcmp(current_type->name,type) == 0){
-            fprintf(stderr, "%s\n", "File type already exists");
+            printErrorMsg("File type already exists");
             return;
         }
         file_type* newType = (file_type*)malloc(sizeof(file_type));

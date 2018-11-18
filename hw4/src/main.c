@@ -126,13 +126,13 @@ while(1){
         if(typeExisted(fileType1) == 0){
             free(fileType1);
             free(fileType2);
-            fprintf(stderr, "%s\n", "file_type1 has not been declared");
+            printErrorMsg("file_type1 has not been declared");
             continue;
         }
         else if(typeExisted(fileType2) == 0){
             free(fileType1);
             free(fileType2);
-            fprintf(stderr, "%s\n", "file_type2 has not been declared");
+            printErrorMsg("file_type2 has not been declared");
             continue;
         }
         addVertex(fileType1);
@@ -173,13 +173,12 @@ while(1){
             fprintf(stdout, "%s\n", s);
             job = job->nextJob;
         }
-        free(s);
     }
     else if(strcmp(strtok(line_read, " "),"print") == 0){
         char* fileName = strtok(line_read + 6, " ");
         char *extension = strrchr(fileName, '.') + 1;
         if(typeExisted(extension) == 0){
-            fprintf(stderr, "%s\n", "File Type has not been declared.");
+            printErrorMsg("File Type has not been declared.");
             continue;
         }
         char* printers = fileName+strlen(fileName)+1;
@@ -189,14 +188,19 @@ while(1){
             while(printers_length > 0){
                 char* printerName = strtok(printers," ");
                 if(printerExisted(printerName) == 0){
-                    fprintf(stderr, "%s ", printerName);
-                    fprintf(stderr, "%s\n","has not been defined");
+                    printErrorMsg("One of the printers has not been declared.");
                     break;
                 }
                 else{
                     if(printerAvailable(printerName,extension) == 1){
                         PRINTER* printer = getPrinter(printerName);
-                        printSameFileType(fileName,extension,printer);
+                        if(printer->enabled == 1 && printer->busy == 0){
+                            printSameFileType(fileName,extension,printer);
+                        }
+                        else{
+                            JOB* job = getJob(fileName,extension,printer);
+                            addJob(job);
+                        }
                         printedWithOptional = 1;
                         break;
                     }
@@ -213,13 +217,20 @@ while(1){
         PRINTER* eligible_printer = NULL;
         printer_address* printer_address = printer_head;
         while(printer_address != NULL){
-            if(strcmp(printer_address->printer->type,extension) == 0 && printer_address->printer->busy == 0 && printer_address->printer->enabled == 1){
+            if(strcmp(printer_address->printer->type,extension) == 0){
                 eligible_printer = printer_address->printer;
             }
             printer_address = printer_address->next;
         }
         if(eligible_printer != NULL){
-            printSameFileType(fileName, extension, eligible_printer);
+            if(eligible_printer->busy == 0 && eligible_printer->enabled == 1){
+                printSameFileType(fileName, extension, eligible_printer);
+            }
+            else{
+                JOB* job = getJob(fileName,extension,eligible_printer);
+                addJob(job);
+            }
+
         }
         else{
             //now, we need to do conversion pipeline
@@ -236,6 +247,15 @@ while(1){
                 break;
             }
             printer_address = printer_address->next;
+        }
+        jobNode* jobNode = jobHead;
+        while(jobNode != NULL){
+             if(jobNode->job->chosen_printer == printer_address->printer){
+                if(jobNode->job->status == QUEUED){
+                    printOldJob(jobNode->job,jobNode->job->file_name, jobNode->job->file_type,jobNode->job->chosen_printer);
+                }
+             }
+            jobNode = jobNode->nextJob;
         }
     }
     else if(strcmp(strtok(line_read, " "),"disable") == 0){
