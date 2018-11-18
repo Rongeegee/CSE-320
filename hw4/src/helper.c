@@ -12,6 +12,7 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 
+
 void addJob(JOB* job){
     jobNode* newJobNode;
     if(jobHead == NULL){
