@@ -145,23 +145,10 @@ while(1){
     }
     else if(strcmp(strtok(line_read, " "),"printers") == 0){
         printer_address* printer = printer_head;
+        char* s;
         while(printer != NULL){
-            fprintf(stdout, "%s", "PRINTER, ");
-            fprintf(stdout, "%d, ", printer->printer->id);
-            fprintf(stdout, "%s, ", printer->printer->name);
-            fprintf(stdout, "%s, ", printer->printer->type);
-            if(printer->printer->enabled == 1){
-                fprintf(stdout, "%s, ", "enabled");
-            }
-            else{
-                fprintf(stdout, "%s, ", "disabled");
-            }
-            if(printer->printer->busy == 1){
-                fprintf(stdout, "%s, ", "busy");
-            }
-            else{
-                fprintf(stdout, "%s\n", "idle");
-            }
+            s = imp_format_printer_status(printer->printer,printerBuff,1024);
+            fprintf(stdout, "%s\n", s);
             printer = printer->next;
         }
     }
@@ -219,6 +206,7 @@ while(1){
         while(printer_address != NULL){
             if(strcmp(printer_address->printer->type,extension) == 0){
                 eligible_printer = printer_address->printer;
+                break;
             }
             printer_address = printer_address->next;
         }
@@ -233,7 +221,10 @@ while(1){
 
         }
         else{
-            //now, we need to do conversion pipeline
+            // now, we need to do conversion pipeline
+
+
+
         }
 
     }

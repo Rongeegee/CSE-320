@@ -3,6 +3,7 @@
 
 
 #include "imprimer.h"
+#include "graph.h"
 
 int isHelp(char* line);
 int isQuit(char* line);
@@ -53,6 +54,8 @@ JOB* getJob(char* fileName, char* fileType, PRINTER* printer);
 void printSameFileType(char* fileName, char* extension,PRINTER* eligible_printer);
 void printErrorMsg(char* msg);
 void printOldJob(JOB* job, char* fileName, char* extension,PRINTER* eligible_printer);
+void printPipeLine(PRINTER* printer,pathNode* pathNode);
+char* getConversionProgram(char* type1, char* type2);
 
 file_type* type_head;
 printer_address* printer_head;
@@ -65,4 +68,5 @@ PRINTER_SET* eligible_printers;
 char buff[20000];
 char batchBuff[1024];
 char errorMsg[60];
+char printerBuff[1024];
 #endif
