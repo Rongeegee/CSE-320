@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/wait.h>
+#define _GNU_SOURCE
 
 void addJob(JOB* job){
     jobNode* newJobNode;
