@@ -1,0 +1,28 @@
+TEST NAME,POINTS,OUT OF,NOTES
+hw2_tests_suite/valgrind_use_after_free,1,1,
+hw2_tests_suite/valgrind_memory_leak,1,1,
+hw2_tests_suite/tokenbuf_test_1000chars,1,1,
+hw2_tests_suite/tokenbuf_test_10000chars,0,1,tests/ta_tests.c:60: Program exited with 0x8b00 instead of EXIT_SUCCESS
+hw2_tests_suite/tokenbuf_test_0chars,1,1,
+hw2_tests_suite/end_to_end_tabsep,1,1,
+hw2_tests_suite/end_to_end_summaries,1,1,
+hw2_tests_suite/end_to_end_stats,1,1,
+hw2_tests_suite/end_to_end_report_sortby_short,1,1,
+hw2_tests_suite/end_to_end_report_sortby,1,1,
+hw2_tests_suite/end_to_end_report_all_short,1,1,
+hw2_tests_suite/end_to_end_report_all,1,1,
+hw2_tests_suite/end_to_end_quants,1,1,
+hw2_tests_suite/end_to_end_o_option_short,0,1,tests/ta_tests.c:26: Output file testreportcompsoutputshort does not match expected tests/rsrc/testreportcompsoutput
+hw2_tests_suite/end_to_end_o_option,0,1,tests/ta_tests.c:26: Output file testreportcompsoutput does not match expected tests/rsrc/testreportcompsoutput
+hw2_tests_suite/end_to_end_nonames_collate_short,1,1,
+hw2_tests_suite/end_to_end_nonames_collate,1,1,
+hw2_tests_suite/end_to_end_long_options,0,1,tests/ta_tests.c:131: Program exited with 0x8b00 instead of EXIT_FAILURE
+hw2_tests_suite/end_to_end_indivs,1,1,
+hw2_tests_suite/end_to_end_histos,1,1,
+hw2_tests_suite/end_to_end_freqs,1,1,
+hw2_tests_suite/end_to_end_comps,1,1,
+hw2_tests_suite/end_to_end_collate_short,1,1,
+hw2_tests_suite/end_to_end_collate,1,1,
+hw2_tests_suite/end_2_end_report_short,1,1,
+hw2_tests_suite/end_2_end_report,1,1,
+total,22,26,
