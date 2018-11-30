@@ -28,14 +28,12 @@
  * The following are the packet types in the protocol:
  *
  * Client-to-server requests:
- *   BEGIN:   Begin a new transaction
- *            (reply returns transaction ID and status)
  *   PUT:     Put a key/value mapping in the store
  *            (sends key, value, and transaction ID)
- *	      (reply returns status)
+ *        (reply returns status)
  *   GET:     Get the store value corresponding to a key
  *            (sends key and transaction ID)
- *	      (reply returns value and status)
+ *        (reply returns value and status)
  *   COMMIT:  Try to commit a transaction
  *            (reply returns status)
  *
@@ -66,7 +64,7 @@ typedef enum {
  * Structure of a packet.
  */
 typedef struct {
-    uint8_t type;		   // Type of the packet
+    uint8_t type;          // Type of the packet
     uint8_t status;                // Status (in reply packet)
     uint8_t null;                  // Whether payload is NULL (in data packet)
     uint32_t size;                 // Payload size (in data packet)

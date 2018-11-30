@@ -1,7 +1,6 @@
 #include "protocol.h"
-#include <stdlib.h>
-#include <fcntl.h>
 #include <unistd.h>
+#include <string.h>
 /*
  * Send a packet, followed by an associated data payload, if any.
  * Multi-byte fields in the packet are converted to network byte order
@@ -18,26 +17,42 @@
  *   latter case, errno is set to indicate the error.
  */
 int proto_send_packet(int fd, XACTO_PACKET *pkt, void *data){
-    uint8_t type = htonl(pkt->type);
-    if(write(fd,&type,sizeof(uint8_t)) == -1)
+    pkt->size = htonl(pkt->size);
+    pkt->timestamp_sec = htonl(pkt->timestamp_sec);
+    pkt->timestamp_nsec = htonl(pkt->timestamp_nsec);
+    if(write(fd,pkt,sizeof(XACTO_PACKET)) == -1)
         return -1;
-    uint8_t status = htonl(pkt->status);
-    if(write(fd,&status,sizeof(uint8_t)) == -1)
+    if(pkt->size > 0){
+        if(write(fd,data,pkt->size) == -1)
+            return -1;
+    }
+    return 0;
+}
+
+/*
+ * Receive a packet, blocking until one is available.
+ * The returned structure has its multi-byte fields in host byte order.
+ *
+ * @param fd  The file descriptor from which the packet is to be received.
+ * @param pkt  Pointer to caller-supplied storage for the fixed-size
+ *   portion of the packet.
+ * @param datap  Pointer to variable into which to store a pointer to any
+ *   payload received.
+ * @return  0 in case of successful reception, -1 otherwise.  In the
+ *   latter case, errno is set to indicate the error.
+ *
+ * If the returned payload pointer is non-NULL, then the caller assumes
+ * responsibility for freeing the storage.
+ */
+
+int proto_recv_packet(int fd, XACTO_PACKET *pkt, void **datap){
+    if(read(fd,pkt,sizeof(XACTO_PACKET)) == -1)
         return -1;
-    uint8_t null = htonl(pkt->null);
-    if(write(fd,&null,sizeof(uint8_t)) == -1)
-        return -1;
-    uint32_t size = htonl(pkt->size);
-    if(write(fd,&size,sizeof(uint32_t)) == -1)
-        return -1;
-    uint32_t timestamp_sec = htonl(pkt->timestamp_sec);
-    if(write(fd,&timestamp_sec,sizeof(uint32_t)) == -1)
-        return -1;
-    uint32_t timestamp_nsec = htonl(pkt->timestamp_nsec);
-    if(write(fd,&timestamp_nsec,sizeof(uint32_t)) == -1)
-        return -1;
-    if(size > 0){
-        if(write(fd,data,size) == -1)
+    pkt->size = ntohl(pkt->size);
+    pkt->timestamp_sec = ntohl(pkt->timestamp_sec);
+    pkt->timestamp_nsec = ntohl(pkt->timestamp_nsec);
+    if(pkt->size > 0){
+        if(read(fd,datap,pkt->size) == -1)
             return -1;
     }
     return 0;
