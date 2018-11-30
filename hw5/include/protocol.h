@@ -64,7 +64,7 @@ typedef enum {
  * Structure of a packet.
  */
 typedef struct {
-    uint8_t type;          // Type of the packet
+    uint8_t type;                  // Type of the packet
     uint8_t status;                // Status (in reply packet)
     uint8_t null;                  // Whether payload is NULL (in data packet)
     uint32_t size;                 // Payload size (in data packet)
