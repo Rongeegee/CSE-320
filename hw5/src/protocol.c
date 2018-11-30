@@ -27,7 +27,7 @@ int proto_send_packet(int fd, XACTO_PACKET *pkt, void *data){
     if(rio_writen(fd,pkt,sizeof(XACTO_PACKET)) < 0)
         return -1;
     if(size > 0){
-        if(rio_writen(fd,data,pkt->size) < 0)
+        if(rio_writen(fd,data,size) < 0)
             return -1;
     }
     return 0;
