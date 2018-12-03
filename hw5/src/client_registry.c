@@ -19,7 +19,7 @@ typedef struct client_registry{
  * @return  the newly initialized client registry.
  */
 CLIENT_REGISTRY *creg_init(){
-    CLIENT_REGISTRY* client_registry = Malloc(sizeof(CLIENT_REGISTRY));
+    CLIENT_REGISTRY* client_registry = malloc(sizeof(CLIENT_REGISTRY));
     for(int i=0; i< 1024; i++){
         client_registry->buf[i] = 0;
     }
@@ -37,7 +37,7 @@ CLIENT_REGISTRY *creg_init(){
  * be referenced again.
  */
 void creg_fini(CLIENT_REGISTRY *cr){
-    Free(cr);
+    free(cr);
 }
 
 /*
@@ -108,7 +108,7 @@ void creg_shutdown_all(CLIENT_REGISTRY *cr){
     P(&cr->mutex);
     for(int i = 0; i < 1024;i++){
         if(cr->buf[i] != 0){
-             shutdown(cr->buf[i],SHUT_RD);
+             shutdown(cr->buf[i],SHUT_RDWR);
         }
 
     }
