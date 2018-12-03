@@ -1,14 +1,12 @@
 #include "client_registry.h"
-#include "client_fd.h"
 #include <stdlib.h>
 #include <semaphore.h>
 #include <sys/socket.h>
 #include "csapp.h"
 
 typedef struct client_registry{
-    connFd* connHead;
+    int* buf;
     int counter;
-    int terminated;
     sem_t mutex;
     sem_t pin;
     sem_t client;
@@ -21,13 +19,12 @@ typedef struct client_registry{
  * @return  the newly initialized client registry.
  */
 CLIENT_REGISTRY *creg_init(){
-    CLIENT_REGISTRY* client_registry = malloc(sizeof(client_registry));
-    client_registry->connHead = NULL;
+    CLIENT_REGISTRY* client_registry = Malloc(sizeof(client_registry));
+    client_registry->buf = calloc(1024,sizeof(int));
     client_registry->counter = 0;
-    client_registry->terminated = 0;
-    Sem_init(&client_registry->mutex,0,1);
-    Sem_init(&client_registry->pin,0,1024);
-    Sem_init(&client_registry->client,0,0);
+    sem_init(&client_registry->mutex,0,1);
+    sem_init(&client_registry->pin,0,1024);
+    sem_init(&client_registry->client,0,0);
     return client_registry;
 }
 
@@ -38,7 +35,7 @@ CLIENT_REGISTRY *creg_init(){
  * be referenced again.
  */
 void creg_fini(CLIENT_REGISTRY *cr){
-    free(cr);
+    Free(cr);
 }
 
 /*
@@ -50,25 +47,17 @@ void creg_fini(CLIENT_REGISTRY *cr){
 void creg_register(CLIENT_REGISTRY *cr, int fd){
     P(&cr->pin);
     P(&cr->mutex);
-    if(cr->connHead == NULL){
-        cr->connHead = NULL;
-        cr->connHead->fd = fd;
-        cr->connHead->nextFd = NULL;
-        cr->connHead->prevFd = NULL;
-        cr->counter++;
-        V(&cr->mutex);
+    if(cr->counter == 1024){
         return;
     }
-    connFd* fileDescriptor = cr->connHead;
-    while(fileDescriptor->nextFd != NULL){
-        fileDescriptor = fileDescriptor->nextFd;
+    for(int i=0; i< 1024; i++){
+        if(cr->buf[i] == 0){
+            cr->buf[i] = fd;
+            cr->counter++;
+            break;
+        }
     }
-    connFd* newFd = malloc(sizeof(connFd));
-    newFd->fd = fd;
-    newFd->nextFd = NULL;
-    newFd->prevFd = fileDescriptor;
-    fileDescriptor->nextFd = newFd;
-    cr->counter++;
+
     V(&cr->mutex);
     V(&cr->client);
 }
@@ -81,51 +70,15 @@ void creg_register(CLIENT_REGISTRY *cr, int fd){
  * @param fd  The file descriptor to be unregistered.
  */
 void creg_unregister(CLIENT_REGISTRY *cr, int fd){
-
     P(&cr->client);
     P(&cr->mutex);
-    if(cr->connHead->fd == fd){
-        connFd* tempFd = cr->connHead;
-        cr->connHead = cr->connHead->nextFd;
-        tempFd->nextFd = NULL;
-        tempFd->prevFd = NULL;
-        tempFd = NULL;
-        free(tempFd);
-        cr->connHead->prevFd = NULL;
-        cr->counter--;
-        V(&cr->mutex);
-        V(&cr->pin);
-        return;
-    }
-    connFd* fileDescriptor = cr->connHead;
-    while(fileDescriptor != NULL){
-        if(fileDescriptor->fd == fd){
-            if(fileDescriptor->nextFd == NULL){
-                connFd* prevDescriptor = fileDescriptor->prevFd;
-                prevDescriptor->nextFd = NULL;
-                fileDescriptor->prevFd = NULL;
-                free(fileDescriptor);
-                cr->counter--;
-                V(&cr->mutex);
-                V(&cr->pin);
-                return;
-            }
-            else{
-                connFd* prevFd = fileDescriptor->prevFd;
-                connFd* nextFd = fileDescriptor->nextFd;
-                prevFd->nextFd = nextFd;
-                nextFd->prevFd = prevFd;
-                fileDescriptor->nextFd = NULL;
-                fileDescriptor->prevFd = NULL;
-                free(fileDescriptor);
-                cr->counter--;
-                V(&cr->mutex);
-                V(&cr->pin);
-                return;
-            }
+    for(int i = 0;i < 1024;i++){
+        if(cr->buf[i] == fd){
+            cr->buf[i] = 0;
+            break;
         }
-        fileDescriptor = fileDescriptor->nextFd;
     }
+    cr->counter--;
     V(&cr->mutex);
     V(&cr->pin);
 }
@@ -139,7 +92,7 @@ void creg_unregister(CLIENT_REGISTRY *cr, int fd){
  */
 void creg_wait_for_empty(CLIENT_REGISTRY *cr){
     P(&cr->mutex);
-    while(&cr->counter > 0);
+    while(cr->counter > 0);
     V(&cr->mutex);
 }
 
@@ -151,10 +104,11 @@ void creg_wait_for_empty(CLIENT_REGISTRY *cr){
  */
 void creg_shutdown_all(CLIENT_REGISTRY *cr){
     P(&cr->mutex);
-    connFd* connection = cr->connHead;
-    while(connection != NULL){
-        shutdown(connection->fd,SHUT_RDWR);
-        connection = connection->nextFd;
+    for(int i = 0; i < 1024;i++){
+        if(cr->buf[i] != 0){
+             shutdown(cr->buf[i],SHUT_RD);
+        }
+
     }
     V(&cr->mutex);
 }
