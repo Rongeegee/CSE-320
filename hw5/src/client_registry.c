@@ -5,7 +5,7 @@
 #include "csapp.h"
 
 typedef struct client_registry{
-    int* buf;
+    int buf[1024];
     int counter;
     sem_t mutex;
     sem_t pin;
@@ -19,8 +19,10 @@ typedef struct client_registry{
  * @return  the newly initialized client registry.
  */
 CLIENT_REGISTRY *creg_init(){
-    CLIENT_REGISTRY* client_registry = Malloc(sizeof(client_registry));
-    client_registry->buf = calloc(1024,sizeof(int));
+    CLIENT_REGISTRY* client_registry = Malloc(sizeof(CLIENT_REGISTRY));
+    for(int i=0; i< 1024; i++){
+        client_registry->buf[i] = 0;
+    }
     client_registry->counter = 0;
     sem_init(&client_registry->mutex,0,1);
     sem_init(&client_registry->pin,0,1024);
