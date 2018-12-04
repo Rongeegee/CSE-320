@@ -1,58 +1,6 @@
-/**
- * === DO NOT MODIFY THIS FILE ===
- * If you need some other prototypes or constants in a header, please put them
- * in another header file.
- *
- * When we grade, we will be replacing this file with our own copy.
- * You have been warned.
- * === DO NOT MODIFY THIS FILE ===
- */
-#ifndef DATA_H
-#define DATA_H
-
-#include <stdlib.h>
-#include <pthread.h>
-#include "transaction.h"
-
-/*
- * A "blob" consists of arbitrary data having a specified size
- * and content.  The content must not be null.  Once a blob has
- * been created, its size and content do not change.  A blob has
- * a reference count field, which is used to keep track of the
- * number of pointers that currently exist pointing to the blob.
- * New pointers are created using blob_ref(), which increments the
- * reference count.  Pointers are destroyed using blob_unref(),
- * which decrements the reference count.  As long as the reference
- * count of a blob is nonzero, it will not be freed.
- */
-typedef struct blob {
-    pthread_mutex_t mutex;     // Mutex to protect reference count
-    int refcnt;
-    size_t size;
-    char *content;
-    char *prefix ;              // String prefix of content (for debugging)
-} BLOB;
-
-/*
- * A key consists of a pointer to a blob and a hash of the blob data.
- */
-typedef struct key {
-    int hash;
-    BLOB *blob;
-} KEY;
-
-/*
- * A VERSION represents a single version of a value associated with a key
- * in the transactional store.  Each version has a creator transaction,
- * a pointer to a blob and links to the next and previous versions in the
- * list of all versions in the same map entry.
- */
-typedef struct version {
-    TRANSACTION *creator;
-    BLOB *blob;
-    struct version *next;
-    struct version *prev;
-} VERSION;
+#include "data.h"
+#include <string.h>
+#include <debug.h>
 
 /*
  * Create a blob with given content and size.
@@ -64,7 +12,14 @@ typedef struct version {
  * @param size  The size in bytes of the content.
  * @return  The new blob, which has reference count 1.
  */
-BLOB *blob_create(char *content, size_t size);
+BLOB *blob_create(char *content, size_t size){
+    BLOB* blob = malloc(sizeof(BLOB));
+    pthread_mutex_init(&(blob->mutex),NULL);
+    strcpy(blob->content,content);
+    strcpy(blob->prefix,content);
+    blob->size = size;
+    return blob;
+}
 
 /*
  * Increase the reference count on a blob.
@@ -73,7 +28,13 @@ BLOB *blob_create(char *content, size_t size);
  * @param why  Short phrase explaining the purpose of the increase.
  * @return  The blob pointer passed as the argument.
  */
-BLOB *blob_ref(BLOB *bp, char *why);
+BLOB *blob_ref(BLOB *bp, char *why){
+    pthread_mutex_lock(&(bp->mutex));
+    bp->refcnt++;
+    pthread_mutex_unlock(&(bp->mutex));
+    debug("%s\n", why);
+    return bp;
+}
 
 /*
  * Decrease the reference count on a blob.
@@ -82,7 +43,15 @@ BLOB *blob_ref(BLOB *bp, char *why);
  * @param bp  The blob.
  * @param why  Short phrase explaining the purpose of the decrease.
  */
-void blob_unref(BLOB *bp, char *why);
+void blob_unref(BLOB *bp, char *why){
+    pthread_mutex_lock(&(bp->mutex));
+    bp->refcnt--;
+    pthread_mutex_unlock(&(bp->mutex));
+    debug("%s\n", why);
+    if(bp->refcnt == 0){
+        free(bp);
+    }
+}
 
 /*
  * Compare two blobs for equality of their content.
@@ -91,7 +60,12 @@ void blob_unref(BLOB *bp, char *why);
  * @param bp2  The second blob.
  * @return 0 if the blobs have equal content, nonzero otherwise.
  */
-int blob_compare(BLOB *bp1, BLOB *bp2);
+int blob_compare(BLOB *bp1, BLOB *bp2){
+    if(strcmp(bp1->content,bp2->content) == 0){
+        return 0;
+    }
+    return 1;
+}
 
 /*
  * Hash function for hashing the content of a blob.
@@ -99,7 +73,9 @@ int blob_compare(BLOB *bp1, BLOB *bp2);
  * @param bp  The blob.
  * @return  Hash of the blob.
  */
-int blob_hash(BLOB *bp);
+int blob_hash(BLOB *bp){
+    return (int)(*(bp->content));
+}
 
 /*
  * Create a key from a blob.
@@ -108,7 +84,12 @@ int blob_hash(BLOB *bp);
  * @param bp  The blob.
  * @return  the newly created key.
  */
-KEY *key_create(BLOB *bp);
+KEY *key_create(BLOB *bp){
+    KEY* key = malloc(sizeof(KEY));
+    key->hash = blob_hash(bp);
+    key->blob = bp;
+    return key;
+}
 
 /*
  * Dispose of a key, decreasing the reference count of the contained blob.
@@ -117,7 +98,10 @@ KEY *key_create(BLOB *bp);
  *
  * @param kp  The key.
  */
-void key_dispose(KEY *kp);
+void key_dispose(KEY *kp){
+    blob_unref(kp->blob, "dispose key");
+    free(kp);
+}
 
 /*
  * Compare two keys for equality.
@@ -126,7 +110,24 @@ void key_dispose(KEY *kp);
  * @param kp2  The second key.
  * @return  0 if the keys are equal, otherwise nonzero.
  */
-int key_compare(KEY *kp1, KEY *kp2);
+int key_compare(KEY *kp1, KEY *kp2){
+    if(kp1->hash != kp2->hash){
+        return 1;
+    }
+    if(kp1->blob->refcnt != kp2->blob->refcnt){
+        return 1;
+    }
+    if(kp1->blob->size != kp2->blob->size){
+        return 1;
+    }
+    if(strcmp(kp1->blob->content,kp2->blob->content) != 0){
+        return 1;
+    }
+    if(strcmp(kp1->blob->prefix,kp2->blob->prefix) != 0){
+        return 1;
+    }
+    return 0;
+}
 
 /*
  * Create a version of a blob for a specified creator transaction.
@@ -138,7 +139,15 @@ int key_compare(KEY *kp1, KEY *kp2);
  * @param bp  The blob.
  * @return  The newly created version.
  */
-VERSION *version_create(TRANSACTION *tp, BLOB *bp);
+VERSION *version_create(TRANSACTION *tp, BLOB *bp){
+    VERSION* version = malloc(sizeof(VERSION));
+    version->creator = tp;
+    tp->refcnt = tp->refcnt + version->blob->refcnt;
+    version->blob = bp;
+    version->next = NULL;
+    version->prev = NULL;
+    return version;
+}
 
 /*
  * Dispose of a version, decreasing the reference count of the
@@ -148,6 +157,8 @@ VERSION *version_create(TRANSACTION *tp, BLOB *bp);
  *
  * @param vp  The version to be disposed.
  */
-void version_dispose(VERSION *vp);
-
-#endif
+void version_dispose(VERSION *vp){
+    blob_unref(vp->blob, "dispose blob");
+    trans_unref(vp->creator, "dispose transaction");
+    free(vp);
+}
