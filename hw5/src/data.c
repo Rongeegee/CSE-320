@@ -82,7 +82,6 @@ int blob_hash(BLOB *bp){
         unsigned long hash = 0;
         int c;
         char* str = bp->content;
-
         while (strcmp(str,"\0"))
         {
             c = *str;
@@ -149,16 +148,12 @@ int key_compare(KEY *kp1, KEY *kp2){
  * @return  The newly created version.
  */
 VERSION *version_create(TRANSACTION *tp, BLOB *bp){
-    pthread_mutex_lock(&(bp->mutex));
     VERSION* version = malloc(sizeof(VERSION));
     version->creator = tp;
-    char msg[] = "for new version";
-    trans_ref(tp,msg);
-    //tp->refcnt = tp->refcnt + version->blob->refcnt;
+    trans_ref(tp,"Increase transaction reference count.");
     version->blob = bp;
     version->next = NULL;
     version->prev = NULL;
-    pthread_mutex_unlock(&(bp->mutex));
     return version;
 }
 
