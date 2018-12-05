@@ -15,10 +15,12 @@
 BLOB *blob_create(char *content, size_t size){
     BLOB* blob = malloc(sizeof(BLOB));
     pthread_mutex_init(&(blob->mutex),NULL);
+    blob->content = malloc(size);
     strcpy(blob->content,content);
-    strcpy(blob->prefix,content);
+    blob->prefix = blob->content;
     blob->size = size;
-    return blob;
+    blob->refcnt = 0;
+    return blob_ref(blob, "create new blob");
 }
 
 /*
@@ -45,12 +47,15 @@ BLOB *blob_ref(BLOB *bp, char *why){
  */
 void blob_unref(BLOB *bp, char *why){
     pthread_mutex_lock(&(bp->mutex));
-    bp->refcnt--;
-    pthread_mutex_unlock(&(bp->mutex));
+    if(bp->refcnt > 0){
+        bp->refcnt--;
+    }
     debug("%s\n", why);
     if(bp->refcnt == 0){
         free(bp);
+        return;
     }
+    pthread_mutex_unlock(&(bp->mutex));
 }
 
 /*
@@ -74,7 +79,18 @@ int blob_compare(BLOB *bp1, BLOB *bp2){
  * @return  Hash of the blob.
  */
 int blob_hash(BLOB *bp){
-    return (int)(*(bp->content));
+        unsigned long hash = 0;
+        int c;
+        char* str = bp->content;
+
+        while (strcmp(str,"\0"))
+        {
+            c = *str;
+            hash = ((hash << 5) + hash) + c;
+            str++;
+        }
+
+        return hash;
 }
 
 /*
@@ -85,9 +101,11 @@ int blob_hash(BLOB *bp){
  * @return  the newly created key.
  */
 KEY *key_create(BLOB *bp){
+    pthread_mutex_lock(&(bp->mutex));
     KEY* key = malloc(sizeof(KEY));
     key->hash = blob_hash(bp);
     key->blob = bp;
+    pthread_mutex_unlock(&(bp->mutex));
     return key;
 }
 
@@ -114,16 +132,7 @@ int key_compare(KEY *kp1, KEY *kp2){
     if(kp1->hash != kp2->hash){
         return 1;
     }
-    if(kp1->blob->refcnt != kp2->blob->refcnt){
-        return 1;
-    }
-    if(kp1->blob->size != kp2->blob->size){
-        return 1;
-    }
-    if(strcmp(kp1->blob->content,kp2->blob->content) != 0){
-        return 1;
-    }
-    if(strcmp(kp1->blob->prefix,kp2->blob->prefix) != 0){
+    if(blob_compare(kp1->blob,kp2->blob) == 1){
         return 1;
     }
     return 0;
@@ -140,12 +149,16 @@ int key_compare(KEY *kp1, KEY *kp2){
  * @return  The newly created version.
  */
 VERSION *version_create(TRANSACTION *tp, BLOB *bp){
+    pthread_mutex_lock(&(bp->mutex));
     VERSION* version = malloc(sizeof(VERSION));
     version->creator = tp;
-    tp->refcnt = tp->refcnt + version->blob->refcnt;
+    char msg[] = "for new version";
+    trans_ref(tp,msg);
+    //tp->refcnt = tp->refcnt + version->blob->refcnt;
     version->blob = bp;
     version->next = NULL;
     version->prev = NULL;
+    pthread_mutex_unlock(&(bp->mutex));
     return version;
 }
 
