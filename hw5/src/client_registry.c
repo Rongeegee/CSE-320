@@ -77,10 +77,11 @@ void creg_unregister(CLIENT_REGISTRY *cr, int fd){
     for(int i = 0;i < 1024;i++){
         if(cr->buf[i] == fd){
             cr->buf[i] = 0;
+            cr->counter--;
             break;
         }
     }
-    cr->counter--;
+
     V(&cr->mutex);
     V(&cr->pin);
 }

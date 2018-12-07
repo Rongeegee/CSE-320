@@ -23,6 +23,7 @@ BLOB *blob_create(char *content, size_t size){
     return blob_ref(blob, "create new blob");
 }
 
+
 /*
  * Increase the reference count on a blob.
  *
@@ -33,8 +34,8 @@ BLOB *blob_create(char *content, size_t size){
 BLOB *blob_ref(BLOB *bp, char *why){
     pthread_mutex_lock(&(bp->mutex));
     bp->refcnt++;
-    pthread_mutex_unlock(&(bp->mutex));
     debug("%s\n", why);
+    pthread_mutex_unlock(&(bp->mutex));
     return bp;
 }
 
@@ -46,6 +47,9 @@ BLOB *blob_ref(BLOB *bp, char *why){
  * @param why  Short phrase explaining the purpose of the decrease.
  */
 void blob_unref(BLOB *bp, char *why){
+    if(bp == NULL){
+        return;
+    }
     pthread_mutex_lock(&(bp->mutex));
     if(bp->refcnt > 0){
         bp->refcnt--;
@@ -88,7 +92,6 @@ int blob_hash(BLOB *bp){
             hash = ((hash << 5) + hash) + c;
             str++;
         }
-
         return hash;
 }
 
@@ -100,11 +103,9 @@ int blob_hash(BLOB *bp){
  * @return  the newly created key.
  */
 KEY *key_create(BLOB *bp){
-    pthread_mutex_lock(&(bp->mutex));
     KEY* key = malloc(sizeof(KEY));
     key->hash = blob_hash(bp);
     key->blob = bp;
-    pthread_mutex_unlock(&(bp->mutex));
     return key;
 }
 
