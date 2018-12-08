@@ -24,9 +24,8 @@ void *xacto_client_service(void *arg){
     free(arg);
     pthread_detach(pthread_self());
     creg_register(client_registry,fd);
-
+    TRANSACTION* transaction = trans_create();
     while(1){
-        TRANSACTION* transaction = trans_create();
         XACTO_PACKET* receivePkt = malloc(sizeof(XACTO_PACKET));
         XACTO_PACKET* sendPkt = malloc(sizeof(XACTO_PACKET));
         void **datap = malloc(sizeof(void**));
@@ -37,7 +36,6 @@ void *xacto_client_service(void *arg){
             free(datap);
             close(fd);
             break;
-
        }
         if(receivePkt->type == XACTO_PUT_PKT){
             proto_recv_packet(fd,receivePkt,datap);
@@ -107,7 +105,7 @@ void *xacto_client_service(void *arg){
         free(sendPkt);
         free(receivePkt);
         free(datap);
-        if(transaction->status == 1 || transaction->status == 2){
+        if(transaction->status == TRANS_COMMITTED || transaction->status == TRANS_ABORTED){
             close(fd);
             break;
         }
