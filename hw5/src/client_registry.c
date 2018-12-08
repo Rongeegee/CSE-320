@@ -59,7 +59,6 @@ void creg_register(CLIENT_REGISTRY *cr, int fd){
             break;
         }
     }
-
     V(&cr->mutex);
     V(&cr->client);
 }
@@ -81,7 +80,6 @@ void creg_unregister(CLIENT_REGISTRY *cr, int fd){
             break;
         }
     }
-
     V(&cr->mutex);
     V(&cr->pin);
 }
