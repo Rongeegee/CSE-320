@@ -34,7 +34,6 @@ void *xacto_client_service(void *arg){
             free(receivePkt);
             free(sendPkt);
             free(datap);
-            close(fd);
             break;
        }
         if(receivePkt->type == XACTO_PUT_PKT){
@@ -106,7 +105,6 @@ void *xacto_client_service(void *arg){
         free(receivePkt);
         free(datap);
         if(transaction->status == TRANS_COMMITTED || transaction->status == TRANS_ABORTED){
-            close(fd);
             break;
         }
     }
