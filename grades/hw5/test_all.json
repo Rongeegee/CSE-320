@@ -1,0 +1,393 @@
+{
+  "id": "Criterion v2.3.2",
+  "passed": 19,
+  "failed": 31,
+  "errored": 1,
+  "skipped": 0,
+  "test_suites": [
+    {
+      "name": "transaction_suite",
+      "passed": 0,
+      "failed": 11,
+      "errored": 0,
+      "skipped": 0,
+      "tests": [
+        {
+          "name": "transaction_ref_unref_test",
+          "assertions": 2,
+          "status": "FAILED",
+          "messages": [
+            "tests/transaction_test.c:40: Expected reference count 1, was 0"
+          ]
+        },
+        {
+          "name": "transaction_multi_dependent_test_2",
+          "assertions": 1,
+          "status": "FAILED",
+          "messages": [
+            "tests/transaction_test.c:228: Dependent transaction did not block as it should"
+          ]
+        },
+        {
+          "name": "transaction_multi_dependent_test_1",
+          "assertions": 1,
+          "status": "FAILED",
+          "messages": [
+            "tests/transaction_test.c:185: Dependent transaction did not block as it should"
+          ]
+        },
+        {
+          "name": "transaction_dependent_commit_test",
+          "assertions": 0,
+          "status": "ERRORED",
+          "messages": ["The test timed out."]
+        },
+        {
+          "name": "transaction_dependent_commit_block_test",
+          "assertions": 1,
+          "status": "FAILED",
+          "messages": [
+            "tests/transaction_test.c:139: Dependent transaction did not block as it should"
+          ]
+        },
+        {
+          "name": "transaction_dependent_abort_test",
+          "assertions": 0,
+          "status": "ERRORED",
+          "messages": ["The test timed out."]
+        },
+        {
+          "name": "transaction_dependent_abort_block_test",
+          "assertions": 0,
+          "status": "ERRORED",
+          "messages": ["The test timed out."]
+        },
+        {
+          "name": "transaction_create_test",
+          "assertions": 2,
+          "status": "FAILED",
+          "messages": [
+            "tests/transaction_test.c:28: Expected reference count 1, was 0"
+          ]
+        },
+        {
+          "name": "transaction_commit_test",
+          "assertions": 0,
+          "status": "ERRORED",
+          "messages": ["The test timed out."]
+        },
+        {
+          "name": "transaction_abort_test",
+          "assertions": 0,
+          "status": "ERRORED",
+          "messages": ["The test timed out."]
+        },
+        {
+          "name": "many_threads_ref_unref_trans",
+          "assertions": 0,
+          "status": "ERRORED",
+          "messages": ["The test timed out."]
+        }
+      ]
+    },
+    {
+      "name": "store_suite",
+      "passed": 0,
+      "failed": 10,
+      "errored": 0,
+      "skipped": 0,
+      "tests": [
+        {
+          "name": "stress_test",
+          "assertions": 1,
+          "status": "FAILED",
+          "messages": [
+            "tests/store_test.c:445: Store was not implemented"
+          ]
+        },
+        {
+          "name": "put_then_get",
+          "assertions": 1,
+          "status": "FAILED",
+          "messages": [
+            "tests/store_test.c:213: Store was not implemented"
+          ]
+        },
+        {
+          "name": "put_on_empty_store",
+          "assertions": 1,
+          "status": "FAILED",
+          "messages": [
+            "tests/store_test.c:194: Store was not implemented"
+          ]
+        },
+        {
+          "name": "multi_trans_forward_gc",
+          "assertions": 1,
+          "status": "FAILED",
+          "messages": [
+            "tests/store_test.c:326: Store was not implemented"
+          ]
+        },
+        {
+          "name": "multi_trans_forward",
+          "assertions": 1,
+          "status": "FAILED",
+          "messages": [
+            "tests/store_test.c:296: Store was not implemented"
+          ]
+        },
+        {
+          "name": "multi_trans_backward",
+          "assertions": 1,
+          "status": "FAILED",
+          "messages": [
+            "tests/store_test.c:376: Store was not implemented"
+          ]
+        },
+        {
+          "name": "multi_put_then_get",
+          "assertions": 1,
+          "status": "FAILED",
+          "messages": [
+            "tests/store_test.c:239: Store was not implemented"
+          ]
+        },
+        {
+          "name": "init",
+          "assertions": 1,
+          "status": "FAILED",
+          "messages": [
+            "tests/store_test.c:162: Store was not implemented"
+          ]
+        },
+        {
+          "name": "get_on_empty_store",
+          "assertions": 1,
+          "status": "FAILED",
+          "messages": [
+            "tests/store_test.c:173: Store was not implemented"
+          ]
+        },
+        {
+          "name": "collisions",
+          "assertions": 1,
+          "status": "FAILED",
+          "messages": [
+            "tests/store_test.c:270: Store was not implemented"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "server_suite",
+      "passed": 2,
+      "failed": 2,
+      "errored": 0,
+      "skipped": 0,
+      "tests": [
+        {
+          "name": "05_bank_simulation",
+          "assertions": 412,
+          "status": "FAILED",
+          "messages": [
+            "tests/server_test.c:347: Receive reply failed",
+            "tests/server_test.c:347: Receive reply failed",
+            "tests/server_test.c:347: Receive reply failed",
+            "tests/server_test.c:347: Receive reply failed"
+          ]
+        },
+        {
+          "name": "02_connect_commit",
+          "assertions": 1,
+          "status": "PASSED"
+        },
+        {
+          "name": "01_connect_abort",
+          "assertions": 1,
+          "status": "PASSED"
+        },
+        {
+          "name": "00_start_server",
+          "assertions": 3,
+          "status": "FAILED",
+          "messages": [
+            "tests/server_test.c:196: Server did not terminate after SIGHUP"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "protocol_suite",
+      "passed": 9,
+      "failed": 2,
+      "errored": 0,
+      "skipped": 0,
+      "tests": [
+        {
+          "name": "send_with_payload",
+          "assertions": 3,
+          "status": "PASSED"
+        },
+        {
+          "name": "send_null_payload",
+          "assertions": 3,
+          "status": "PASSED"
+        },
+        {
+          "name": "send_no_payload",
+          "assertions": 3,
+          "status": "PASSED"
+        },
+        {
+          "name": "send_error",
+          "assertions": 2,
+          "status": "PASSED"
+        },
+        {
+          "name": "recv_with_payload",
+          "assertions": 9,
+          "status": "PASSED"
+        },
+        {
+          "name": "recv_short_payload",
+          "assertions": 2,
+          "status": "FAILED",
+          "messages": [
+            "tests/protocol_test.c:231: Returned value was not -1"
+          ]
+        },
+        {
+          "name": "recv_short_header",
+          "assertions": 2,
+          "status": "FAILED",
+          "messages": [
+            "tests/protocol_test.c:214: Returned value was not -1"
+          ]
+        },
+        {
+          "name": "recv_null_payload",
+          "assertions": 8,
+          "status": "PASSED"
+        },
+        {
+          "name": "recv_no_payload",
+          "assertions": 8,
+          "status": "PASSED"
+        },
+        {
+          "name": "recv_error",
+          "assertions": 2,
+          "status": "PASSED"
+        },
+        {
+          "name": "recv_empty",
+          "assertions": 2,
+          "status": "PASSED"
+        }
+      ]
+    },
+    {
+      "name": "data_suite",
+      "passed": 5,
+      "failed": 4,
+      "errored": 0,
+      "skipped": 0,
+      "tests": [
+        {
+          "name": "version_dispose_test",
+          "assertions": 2,
+          "status": "FAILED",
+          "messages": [
+            "tests/data_test.c:134: Transaction refcnt was 0, not 1"
+          ]
+        },
+        {
+          "name": "version_create_test",
+          "assertions": 2,
+          "status": "FAILED",
+          "messages": [
+            "tests/data_test.c:113: Transaction refcnt was 0, not 1"
+          ]
+        },
+        {
+          "name": "many_threads_ref_unref_blob",
+          "assertions": 3,
+          "status": "PASSED"
+        },
+        {
+          "name": "key_dispose_test",
+          "assertions": 2,
+          "status": "PASSED"
+        },
+        {
+          "name": "key_create_test",
+          "assertions": 3,
+          "status": "PASSED"
+        },
+        {
+          "name": "key_compare_test",
+          "assertions": 2,
+          "status": "FAILED",
+          "messages": [
+            "tests/data_test.c:101: Result should be nonzero"
+          ]
+        },
+        {
+          "name": "blob_ref_unref_test",
+          "assertions": 3,
+          "status": "PASSED"
+        },
+        {
+          "name": "blob_create_test",
+          "assertions": 4,
+          "status": "PASSED"
+        },
+        {
+          "name": "blob_compare_test",
+          "assertions": 2,
+          "status": "FAILED",
+          "messages": [
+            "tests/data_test.c:59: Result should be nonzero"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "client_registry_suite",
+      "passed": 3,
+      "failed": 2,
+      "errored": 1,
+      "skipped": 0,
+      "tests": [
+        {
+          "name": "many_threads_one_registry_premature",
+          "assertions": 0,
+          "status": "ERRORED",
+          "messages": ["The test crashed."]
+        },
+        {
+          "name": "many_threads_one_registry",
+          "assertions": 2,
+          "status": "PASSED"
+        },
+        {
+          "name": "basic_one_registry_premature",
+          "assertions": 0,
+          "status": "ERRORED",
+          "messages": ["The test timed out."]
+        },
+        {
+          "name": "basic_two_registries",
+          "assertions": 3,
+          "status": "PASSED"
+        },
+        {
+          "name": "basic_one_registry",
+          "assertions": 2,
+          "status": "PASSED"
+        }
+      ]
+    }
+  ]
+}

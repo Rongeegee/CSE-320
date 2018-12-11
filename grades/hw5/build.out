@@ -1,0 +1,33 @@
+rm -rf build bin
+mkdir -p bin
+mkdir -p build
+gcc -Wall -Werror -Wno-unused-function -MMD -std=gnu11 -I include -c -o build/main.o src/main.c
+gcc -Wall -Werror -Wno-unused-function -MMD -std=gnu11 -I include -c -o build/client_registry.o src/client_registry.c
+gcc -Wall -Werror -Wno-unused-function -MMD -std=gnu11 -I include -c -o build/server.o src/server.c
+gcc -Wall -Werror -Wno-unused-function -MMD -std=gnu11 -I include -c -o build/data.o src/data.c
+gcc -Wall -Werror -Wno-unused-function -MMD -std=gnu11 -I include -c -o build/protocol_funcs.o src/protocol_funcs.c
+gcc -Wall -Werror -Wno-unused-function -MMD -std=gnu11 -I include -c -o build/protocol.o src/protocol.c
+gcc -Wall -Werror -Wno-unused-function -MMD -std=gnu11 -I include -c -o build/transaction.o src/transaction.c
+gcc -Wall -Werror -Wno-unused-function -MMD -std=gnu11 -I include -c -o build/csapp.o src/csapp.c
+gcc build/main.o build/client_registry.o build/server.o build/data.o build/protocol_funcs.o build/protocol.o build/transaction.o build/csapp.o -o bin/xacto lib/xacto.a -lpthread
+rm -f include/excludes.h
+touch include/excludes.h
+if nm bin/xacto | grep INSTRUCTOR_CLIENT_REGISTRY > /dev/null; then \
+           echo "#define NO_CLIENT_REGISTRY" >> include/excludes.h; \
+        fi
+if nm bin/xacto | grep INSTRUCTOR_DATA > /dev/null; then \
+           echo "#define NO_DATA" >> include/excludes.h; \
+        fi
+if nm bin/xacto | grep INSTRUCTOR_PROTOCOL > /dev/null; then \
+           echo "#define NO_PROTOCOL" >> include/excludes.h; \
+        fi
+if nm bin/xacto | grep INSTRUCTOR_SERVER > /dev/null; then \
+           echo "#define NO_SERVER" >> include/excludes.h; \
+        fi
+if nm bin/xacto | grep INSTRUCTOR_STORE > /dev/null; then \
+           echo "#define NO_STORE" >> include/excludes.h; \
+        fi
+if nm bin/xacto | grep INSTRUCTOR_TRANSACTION > /dev/null; then \
+           echo "#define NO_TRANSACTION" >> include/excludes.h; \
+        fi
+gcc -Wall -Werror -Wno-unused-function -MMD -std=gnu11 -I include build/client_registry.o build/server.o build/data.o build/protocol_funcs.o build/protocol.o build/transaction.o build/csapp.o tests/server_test.c tests/client_registry_test.c tests/store_test.c tests/data_test.c tests/protocol_test.c tests/transaction_test.c  -lcriterion lib/xacto.a -lpthread -o bin/xacto_tests

@@ -1,0 +1,192 @@
+==23096== Memcheck, a memory error detector
+==23096== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
+==23096== Using Valgrind-3.11.0 and LibVEX; rerun with -h for copyright info
+==23096== Command: bin/xacto -p 9999
+==23096== Parent PID: 23091
+==23096== 
+==23096== Thread 2:
+==23096== Conditional jump or move depends on uninitialised value(s)
+==23096==    at 0x403549: trans_commit (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402A9D: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Syscall param write(buf) points to uninitialised byte(s)
+==23096==    at 0x4E4A4BD: ??? (syscall-template.S:84)
+==23096==    by 0x404AD4: rio_writen (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4030DC: proto_send_packet (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402B07: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x54241d3 is 3 bytes inside a block of size 16 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x40275F: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid read of size 1
+==23096==    at 0x4C30F74: strlen (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x4027EB: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5424476 is 0 bytes after a block of size 6 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x4031B1: proto_recv_packet (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4027DC: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid read of size 1
+==23096==    at 0x4C31063: strcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BDE: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402800: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5424476 is 0 bytes after a block of size 6 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x4031B1: proto_recv_packet (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4027DC: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid write of size 1
+==23096==    at 0x4C3106F: strcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BDE: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402800: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5424556 is 0 bytes after a block of size 6 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BBC: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402800: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid read of size 1
+==23096==    at 0x402D50: blob_hash (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402D82: key_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402810: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5424556 is 0 bytes after a block of size 6 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BBC: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402800: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid read of size 1
+==23096==    at 0x4C30F74: strlen (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402838: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x54245f3 is 0 bytes after a block of size 3 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x4031B1: proto_recv_packet (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402829: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid read of size 1
+==23096==    at 0x4C31063: strcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BDE: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x40284D: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x54245f3 is 0 bytes after a block of size 3 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x4031B1: proto_recv_packet (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402829: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid write of size 1
+==23096==    at 0x4C3106F: strcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BDE: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x40284D: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x54246d3 is 0 bytes after a block of size 3 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BBC: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x40284D: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Syscall param write(buf) points to uninitialised byte(s)
+==23096==    at 0x4E4A4BD: ??? (syscall-template.S:84)
+==23096==    by 0x404AD4: rio_writen (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4030DC: proto_send_packet (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4028D2: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x54243d3 is 3 bytes inside a block of size 16 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x40275F: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid read of size 1
+==23096==    at 0x4C31063: strcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BDE: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402916: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5429da6 is 0 bytes after a block of size 6 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x4031B1: proto_recv_packet (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4028FB: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid write of size 1
+==23096==    at 0x4C3106F: strcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BDE: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402916: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5429e86 is 0 bytes after a block of size 6 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BBC: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402916: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid read of size 1
+==23096==    at 0x402D50: blob_hash (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402D82: key_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402934: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5429e86 is 0 bytes after a block of size 6 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BBC: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402916: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid read of size 1
+==23096==    at 0x4C31FB4: strcmp (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402CEB: blob_compare (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402E0E: key_compare (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x405415: find_map_entry (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x405836: store_get (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x40294F: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5424556 is 0 bytes after a block of size 6 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BBC: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402800: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid read of size 1
+==23096==    at 0x4C31FB7: strcmp (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402CEB: blob_compare (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402E0E: key_compare (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x405415: find_map_entry (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x405836: store_get (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x40294F: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5429e86 is 0 bytes after a block of size 6 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BBC: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402916: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Syscall param write(buf) points to uninitialised byte(s)
+==23096==    at 0x4E4A4BD: ??? (syscall-template.S:84)
+==23096==    by 0x404AD4: rio_writen (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4030DC: proto_send_packet (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4029BA: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5429d03 is 3 bytes inside a block of size 16 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x40275F: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Syscall param write(buf) points to uninitialised byte(s)
+==23096==    at 0x4E4A4BD: ??? (syscall-template.S:84)
+==23096==    by 0x404AD4: rio_writen (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4030DC: proto_send_packet (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402A81: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5429d03 is 3 bytes inside a block of size 16 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x40275F: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 

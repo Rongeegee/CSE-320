@@ -1,0 +1,275 @@
+[1] 22995
+[[0;34m----[0m] [0;1mtests/data_test.c[0m:[0;31m59[0m: Assertion failed: Result should be nonzero
+[[0;31mFAIL[0m] data_suite::blob_compare_test: (0.00s)
+[[0;34m----[0m] [0;1mtests/data_test.c[0m:[0;31m101[0m: Assertion failed: Result should be nonzero
+[[0;31mFAIL[0m] data_suite::key_compare_test: (0.00s)
+[[0;34m----[0m] [0;1mtests/data_test.c[0m:[0;31m113[0m: Assertion failed: Transaction refcnt was 0, not 1
+[[0;31mFAIL[0m] data_suite::version_create_test: (0.00s)
+[[0;34m----[0m] [0;1mtests/data_test.c[0m:[0;31m134[0m: Assertion failed: Transaction refcnt was 0, not 1
+[[0;31mFAIL[0m] data_suite::version_dispose_test: (0.00s)
+[[0;34m----[0m] [0;1mtests/protocol_test.c[0m:[0;31m214[0m: Assertion failed: Returned value was not -1
+[[0;31mFAIL[0m] protocol_suite::recv_short_header: (0.01s)
+[[0;34m----[0m] [0;1mtests/protocol_test.c[0m:[0;31m231[0m: Assertion failed: Returned value was not -1
+[[0;31mFAIL[0m] protocol_suite::recv_short_payload: (0.00s)
+server_suite/00_start_server
+Starting server...pid = 23096
+[[0;31mFAIL[0m] client_registry_suite::basic_one_registry_premature: Timed out. (5.00s)
+Connected to server localhost:9999
+***Initialization phase
+***Transfer phase
+[[0;34m----[0m] [0;1mtests/store_test.c[0m:[0;31m270[0m: Assertion failed: Store was not implemented
+[[0;31mFAIL[0m] store_suite::collisions: (0.00s)
+[[0;34m----[0m] [0;1mtests/store_test.c[0m:[0;31m173[0m: Assertion failed: Store was not implemented
+[[0;31mFAIL[0m] store_suite::get_on_empty_store: (0.00s)
+[[0;34m----[0m] [0;1mtests/store_test.c[0m:[0;31m162[0m: Assertion failed: Store was not implemented
+[[0;31mFAIL[0m] store_suite::init: (0.00s)
+[[0;34m----[0m] [0;1mtests/store_test.c[0m:[0;31m239[0m: Assertion failed: Store was not implemented
+[[0;31mFAIL[0m] store_suite::multi_put_then_get: (0.00s)
+[[0;34m----[0m] [0;1mtests/store_test.c[0m:[0;31m376[0m: Assertion failed: Store was not implemented
+[[0;31mFAIL[0m] store_suite::multi_trans_backward: (0.00s)
+[[0;34m----[0m] [0;1mtests/store_test.c[0m:[0;31m296[0m: Assertion failed: Store was not implemented
+[[0;31mFAIL[0m] store_suite::multi_trans_forward: (0.00s)
+[[0;34m----[0m] [0;1mtests/store_test.c[0m:[0;31m326[0m: Assertion failed: Store was not implemented
+[[0;31mFAIL[0m] store_suite::multi_trans_forward_gc: (0.00s)
+[[0;34m----[0m] [0;1mtests/store_test.c[0m:[0;31m194[0m: Assertion failed: Store was not implemented
+[[0;31mFAIL[0m] store_suite::put_on_empty_store: (0.00s)
+[[0;34m----[0m] [0;1mtests/store_test.c[0m:[0;31m213[0m: Assertion failed: Store was not implemented
+[[0;31mFAIL[0m] store_suite::put_then_get: (0.00s)
+[[0;34m----[0m] [0;1mtests/store_test.c[0m:[0;31m445[0m: Assertion failed: Store was not implemented
+[[0;31mFAIL[0m] store_suite::stress_test: (0.00s)
+[[0;31mFAIL[0m] transaction_suite::many_threads_ref_unref_trans: Timed out. (10.00s)
+[[0;31mFAIL[0m] transaction_suite::transaction_abort_test: Timed out. (5.00s)
+[[0;31mFAIL[0m] transaction_suite::transaction_commit_test: Timed out. (5.00s)
+[[0;34m----[0m] [0;1mtests/transaction_test.c[0m:[0;31m28[0m: Assertion failed: Expected reference count 1, was 0
+[[0;31mFAIL[0m] transaction_suite::transaction_create_test: (0.00s)
+[[0;31mFAIL[0m] transaction_suite::transaction_dependent_abort_block_test: Timed out. (5.00s)
+Sending SIGHUP to server pid 23096
+proto_recv_packet: Success
+ret = -1
+[[0;34m----[0m] [0;1mtests/server_test.c[0m:[0;31m347[0m: Assertion failed: Receive reply failed
+proto_recv_packet: Success
+ret = -1
+proto_recv_packet: Success
+ret = -1
+proto_recv_packet: Success
+ret = -1
+proto_recv_packet: Success
+ret = -1
+proto_recv_packet: Success
+ret = -1
+[[0;31mFAIL[0m] server_suite::05_bank_simulation: (34.43s)
+[[0;34m----[0m] [0;1mtests/server_test.c[0m:[0;31m347[0m: Assertion failed: Receive reply failed
+[[0;34m----[0m] [0;1mtests/server_test.c[0m:[0;31m347[0m: Assertion failed: Receive reply failed
+[[0;31mERR [0m] [0;31m[0;1m[PID 23121]: Expected message to change to state 'end', got 'teardown' instead.
+[0m[[0;31mERR [0m] [0;31m[0;1mRunner returned an error: Expected message to change to state 'end', got 'teardown' instead..
+[0m[[0;34m----[0m] [0;1mtests/server_test.c[0m:[0;31m347[0m: Assertion failed: Receive reply failed
+[[0;34m----[0m] [0;1mWarning! The test `server_suite::05_bank_simulation` crashed during its setup or teardown.[0m
+[[0;31mFAIL[0m] transaction_suite::transaction_dependent_abort_test: Timed out. (5.00s)
+[[0;34m----[0m] [0;1mtests/transaction_test.c[0m:[0;31m139[0m: Assertion failed: Dependent transaction did not block as it should
+[[0;31mFAIL[0m] transaction_suite::transaction_dependent_commit_block_test: (1.00s)
+[[0;34m----[0m] [0;1mtests/transaction_test.c[0m:[0;31m185[0m: Assertion failed: Dependent transaction did not block as it should
+[[0;31mFAIL[0m] transaction_suite::transaction_multi_dependent_test_1: (1.00s)
+[[0;34m----[0m] [0;1mtests/transaction_test.c[0m:[0;31m228[0m: Assertion failed: Dependent transaction did not block as it should
+[[0;31mFAIL[0m] transaction_suite::transaction_multi_dependent_test_2: (1.00s)
+[[0;34m----[0m] [0;1mtests/transaction_test.c[0m:[0;31m40[0m: Assertion failed: Expected reference count 1, was 0
+[[0;31mFAIL[0m] transaction_suite::transaction_ref_unref_test: (0.00s)
+Server wait() returned = 0x9
+Server terminated with signal 9
+==23096== Memcheck, a memory error detector
+==23096== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
+==23096== Using Valgrind-3.11.0 and LibVEX; rerun with -h for copyright info
+==23096== Command: bin/xacto -p 9999
+==23096== Parent PID: 23091
+==23096== 
+==23096== Thread 2:
+==23096== Conditional jump or move depends on uninitialised value(s)
+==23096==    at 0x403549: trans_commit (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402A9D: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Syscall param write(buf) points to uninitialised byte(s)
+==23096==    at 0x4E4A4BD: ??? (syscall-template.S:84)
+==23096==    by 0x404AD4: rio_writen (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4030DC: proto_send_packet (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402B07: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x54241d3 is 3 bytes inside a block of size 16 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x40275F: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid read of size 1
+==23096==    at 0x4C30F74: strlen (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x4027EB: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5424476 is 0 bytes after a block of size 6 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x4031B1: proto_recv_packet (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4027DC: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid read of size 1
+==23096==    at 0x4C31063: strcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BDE: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402800: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5424476 is 0 bytes after a block of size 6 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x4031B1: proto_recv_packet (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4027DC: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid write of size 1
+==23096==    at 0x4C3106F: strcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BDE: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402800: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5424556 is 0 bytes after a block of size 6 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BBC: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402800: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid read of size 1
+==23096==    at 0x402D50: blob_hash (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402D82: key_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402810: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5424556 is 0 bytes after a block of size 6 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BBC: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402800: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid read of size 1
+==23096==    at 0x4C30F74: strlen (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402838: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x54245f3 is 0 bytes after a block of size 3 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x4031B1: proto_recv_packet (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402829: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid read of size 1
+==23096==    at 0x4C31063: strcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BDE: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x40284D: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x54245f3 is 0 bytes after a block of size 3 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x4031B1: proto_recv_packet (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402829: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid write of size 1
+==23096==    at 0x4C3106F: strcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BDE: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x40284D: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x54246d3 is 0 bytes after a block of size 3 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BBC: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x40284D: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Syscall param write(buf) points to uninitialised byte(s)
+==23096==    at 0x4E4A4BD: ??? (syscall-template.S:84)
+==23096==    by 0x404AD4: rio_writen (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4030DC: proto_send_packet (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4028D2: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x54243d3 is 3 bytes inside a block of size 16 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x40275F: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid read of size 1
+==23096==    at 0x4C31063: strcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BDE: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402916: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5429da6 is 0 bytes after a block of size 6 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x4031B1: proto_recv_packet (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4028FB: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid write of size 1
+==23096==    at 0x4C3106F: strcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BDE: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402916: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5429e86 is 0 bytes after a block of size 6 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BBC: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402916: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid read of size 1
+==23096==    at 0x402D50: blob_hash (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402D82: key_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402934: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5429e86 is 0 bytes after a block of size 6 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BBC: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402916: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid read of size 1
+==23096==    at 0x4C31FB4: strcmp (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402CEB: blob_compare (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402E0E: key_compare (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x405415: find_map_entry (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x405836: store_get (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x40294F: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5424556 is 0 bytes after a block of size 6 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BBC: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402800: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Invalid read of size 1
+==23096==    at 0x4C31FB7: strcmp (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402CEB: blob_compare (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402E0E: key_compare (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x405415: find_map_entry (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x405836: store_get (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x40294F: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5429e86 is 0 bytes after a block of size 6 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x402BBC: blob_create (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402916: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Syscall param write(buf) points to uninitialised byte(s)
+==23096==    at 0x4E4A4BD: ??? (syscall-template.S:84)
+==23096==    by 0x404AD4: rio_writen (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4030DC: proto_send_packet (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4029BA: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5429d03 is 3 bytes inside a block of size 16 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x40275F: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+==23096== Syscall param write(buf) points to uninitialised byte(s)
+==23096==    at 0x4E4A4BD: ??? (syscall-template.S:84)
+==23096==    by 0x404AD4: rio_writen (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4030DC: proto_send_packet (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x402A81: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096==  Address 0x5429d03 is 3 bytes inside a block of size 16 alloc'd
+==23096==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23096==    by 0x40275F: xacto_client_service (in /home/gene/Courses/320/HANDINS/rolli/hw5/bin/xacto)
+==23096==    by 0x4E416B9: start_thread (pthread_create.c:333)
+==23096== 
+[[0;34m----[0m] [0;1mtests/server_test.c[0m:[0;31m196[0m: Assertion failed: Server did not terminate after SIGHUP
+[[0;31mFAIL[0m] server_suite::00_start_server: (45.04s)
+[[0;31mFAIL[0m] transaction_suite::transaction_dependent_commit_test: Timed out. (5.00s)
+[[0;34m----[0m] [0;1mtests/client_registry_test.c[0m:[0;31m302[0m: Unexpected signal caught below this line!
+[[0;31mFAIL[0m] client_registry_suite::many_threads_one_registry_premature: CRASH!
+[[0;34m====[0m] [0;1mSynthesis: Tested: [0;34m50[0;1m | Passing: [0;32m19[0;1m | Failing: [0;31m31[0;1m | Crashing: [0;31m1[0;1m [0m
