@@ -1,0 +1,52 @@
+TEST NAME,POINTS,OUT OF,NOTES
+transaction_suite/transaction_ref_unref_test,0,1,["tests/transaction_test.c:40: Expected reference count 1, was 0"]
+transaction_suite/transaction_multi_dependent_test_2,0,1,["tests/transaction_test.c:228: Dependent transaction did not block as it should"]
+transaction_suite/transaction_multi_dependent_test_1,0,1,["tests/transaction_test.c:185: Dependent transaction did not block as it should"]
+transaction_suite/transaction_dependent_commit_test,0,1,["The test timed out."]
+transaction_suite/transaction_dependent_commit_block_test,0,1,["tests/transaction_test.c:139: Dependent transaction did not block as it should"]
+transaction_suite/transaction_dependent_abort_test,0,1,["The test timed out."]
+transaction_suite/transaction_dependent_abort_block_test,0,1,["The test timed out."]
+transaction_suite/transaction_create_test,0,1,["tests/transaction_test.c:28: Expected reference count 1, was 0"]
+transaction_suite/transaction_commit_test,0,1,["The test timed out."]
+transaction_suite/transaction_abort_test,0,1,["The test timed out."]
+transaction_suite/many_threads_ref_unref_trans,0,1,["The test timed out."]
+store_suite/stress_test,0,1,["tests/store_test.c:445: Store was not implemented"]
+store_suite/put_then_get,0,1,["tests/store_test.c:213: Store was not implemented"]
+store_suite/put_on_empty_store,0,1,["tests/store_test.c:194: Store was not implemented"]
+store_suite/multi_trans_forward_gc,0,1,["tests/store_test.c:326: Store was not implemented"]
+store_suite/multi_trans_forward,0,1,["tests/store_test.c:296: Store was not implemented"]
+store_suite/multi_trans_backward,0,1,["tests/store_test.c:376: Store was not implemented"]
+store_suite/multi_put_then_get,0,1,["tests/store_test.c:239: Store was not implemented"]
+store_suite/init,0,1,["tests/store_test.c:162: Store was not implemented"]
+store_suite/get_on_empty_store,0,1,["tests/store_test.c:173: Store was not implemented"]
+store_suite/collisions,0,1,["tests/store_test.c:270: Store was not implemented"]
+server_suite/05_bank_simulation,0,1,["tests/server_test.c:347: Receive reply failed","tests/server_test.c:347: Receive reply failed","tests/server_test.c:347: Receive reply failed","tests/server_test.c:347: Receive reply failed"]
+server_suite/02_connect_commit,1,1,
+server_suite/01_connect_abort,1,1,
+server_suite/00_start_server,0,1,["tests/server_test.c:196: Server did not terminate after SIGHUP"]
+protocol_suite/send_with_payload,1,1,
+protocol_suite/send_null_payload,1,1,
+protocol_suite/send_no_payload,1,1,
+protocol_suite/send_error,1,1,
+protocol_suite/recv_with_payload,1,1,
+protocol_suite/recv_short_payload,0,1,["tests/protocol_test.c:231: Returned value was not -1"]
+protocol_suite/recv_short_header,0,1,["tests/protocol_test.c:214: Returned value was not -1"]
+protocol_suite/recv_null_payload,1,1,
+protocol_suite/recv_no_payload,1,1,
+protocol_suite/recv_error,1,1,
+protocol_suite/recv_empty,1,1,
+data_suite/version_dispose_test,0,1,["tests/data_test.c:134: Transaction refcnt was 0, not 1"]
+data_suite/version_create_test,0,1,["tests/data_test.c:113: Transaction refcnt was 0, not 1"]
+data_suite/many_threads_ref_unref_blob,1,1,
+data_suite/key_dispose_test,1,1,
+data_suite/key_create_test,1,1,
+data_suite/key_compare_test,0,1,["tests/data_test.c:101: Result should be nonzero"]
+data_suite/blob_ref_unref_test,1,1,
+data_suite/blob_create_test,1,1,
+data_suite/blob_compare_test,0,1,["tests/data_test.c:59: Result should be nonzero"]
+client_registry_suite/many_threads_one_registry_premature,0,1,["The test crashed."]
+client_registry_suite/many_threads_one_registry,1,1,
+client_registry_suite/basic_one_registry_premature,0,1,["The test timed out."]
+client_registry_suite/basic_two_registries,1,1,
+client_registry_suite/basic_one_registry,1,1,
+total,19,50
